@@ -6,6 +6,7 @@ import {
   TextField,
   useMediaQuery,
   Typography,
+  Snackbar,
   Alert,
   useTheme,
 } from "@mui/material";
@@ -67,6 +68,12 @@ const Form = () => {
   const isLogin = pageType === "login";
   const isRegister = pageType === "register";
   const isForgotPassword = pageType === "forgot";
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+
+  const handleSnackbarClose = () => {
+    setSnackbarOpen(false);
+  };
 
   const register = async (values, onSubmitProps) => {
     // this allows us to send form info with image
@@ -108,7 +115,8 @@ const Form = () => {
       );
       navigate("/dashboard");
     } else if (loggedInResponse.status === 400) {
-      <Alert severity="error">{loggedIn.msg}</Alert>;
+      setSnackbarMessage(loggedIn.msg);
+      setSnackbarOpen(true);
     }
   };
 
@@ -366,6 +374,15 @@ const Form = () => {
                     ? "Don't have an account? Sign Up here."
                     : "Already have an account? Login here."}
                 </Typography>
+                <Snackbar
+                  open={snackbarOpen}
+                  autoHideDuration={4000}
+                  onClose={handleSnackbarClose}
+                >
+                  <Alert severity="error" onClose={handleSnackbarClose}>
+                    {snackbarMessage}
+                  </Alert>
+                </Snackbar>
               </>
             )}
 
