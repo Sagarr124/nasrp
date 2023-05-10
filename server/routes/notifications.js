@@ -4,10 +4,10 @@ import { verifyToken } from "../middleware/auth.js";
 
 const router = express.Router();
 
+/* READ */
+router.get("/:id", verifyToken, getNotifications);
+
 /* CREATE */
 router.post("/", verifyToken, sendNotification);
-
-/* READ */
-router.get("/", verifyToken, getNotifications);
 
 export default router;

@@ -6,6 +6,8 @@ import {
   Typography,
   Button,
   Divider,
+  Snackbar,
+  Alert,
   useTheme,
 } from "@mui/material";
 import UserImage from "./UserImage";
@@ -25,7 +27,7 @@ const JobWidget = ({
   date,
 }) => {
   const dispatch = useDispatch();
-  const { _id, username } = useSelector((state) => state.user);
+  const { _id, userName } = useSelector((state) => state.user);
   const token = useSelector((state) => state.token);
   const userMode = useSelector((state) => state.userMode);
   const { palette } = useTheme();
@@ -33,6 +35,13 @@ const JobWidget = ({
   const medium = palette.neutral.medium;
   const [open, setOpen] = useState(false);
   const [bid, setBid] = useState("");
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [severity, setSeverity] = useState("error");
+
+  const handleSnackbarClose = () => {
+    setSnackbarOpen(false);
+  };
 
   const handleOpen = () => setOpen(true);
 
@@ -42,23 +51,32 @@ const JobWidget = ({
   };
 
   const sendNotification = async () => {
-    const formData = new FormData();
-    formData.append("senderId", _id);
-    formData.append("receiverId", clientId);
-    formData.append(
-      "text",
-      `You received an offer of Rs. ${bid} from ${username}`
-    );
-
     const response = await fetch(`http://localhost:3001/notifications`, {
       method: "POST",
-      headers: { Authorization: `Bearer ${token}` },
-      body: formData,
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        senderId: _id,
+        receiverId: clientId,
+        text: `You received an offer of Rs. ${bid} from ${userName}`,
+      }),
     });
 
     const notifications = await response.json();
-    dispatch(setNotifications({ notifications }));
-    handleClose();
+
+    if (response.status === 201) {
+      dispatch(setNotifications({ notifications }));
+      handleClose();
+      setSeverity("success");
+      setSnackbarMessage("Bid sent successfully!");
+      setSnackbarOpen(true);
+    } else if (response.status === 409) {
+      setSeverity("error");
+      setSnackbarMessage("Bid sending failed!");
+      setSnackbarOpen(true);
+    }
   };
 
   return (
@@ -132,7 +150,7 @@ const JobWidget = ({
               fontWeight={"600"}
               marginBottom={"1rem"}
             >
-              Do you want to send the request?
+              Send your bid
             </Typography>
             <TextField
               fullWidth
@@ -171,6 +189,15 @@ const JobWidget = ({
               >
                 Confirm
               </Button>
+              <Snackbar
+                open={snackbarOpen}
+                autoHideDuration={4000}
+                onClose={handleSnackbarClose}
+              >
+                <Alert severity={severity} onClose={handleSnackbarClose}>
+                  {snackbarMessage}
+                </Alert>
+              </Snackbar>
             </FlexBetween>
           </Box>
         </Modal>

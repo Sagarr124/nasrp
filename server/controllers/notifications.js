@@ -8,7 +8,7 @@ export const sendNotification = async (req, res) => {
       senderId,
       receiverId,
       text,
-      read,
+      read: false,
     });
     await newNotification.save();
 
@@ -23,7 +23,8 @@ export const sendNotification = async (req, res) => {
 /* READ */
 export const getNotifications = async (req, res) => {
   try {
-    const notifications = await Notification.find();
+    const { id } = req.params;
+    const notifications = await Notification.find({ receiverId: id });
     res.status(200).json(notifications);
   } catch (err) {
     res.status(404).json({ message: err.message });

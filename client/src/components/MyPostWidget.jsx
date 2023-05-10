@@ -40,6 +40,7 @@ const MyPostWidget = ({ picturePath }) => {
   const medium = palette.neutral.medium;
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [severity, setSeverity] = useState("error");
 
   const handleSnackbarClose = () => {
     setSnackbarOpen(false);
@@ -66,9 +67,11 @@ const MyPostWidget = ({ picturePath }) => {
       dispatch(setPosts({ posts }));
       setImage(null);
       setPost("");
+      setSeverity("success");
       setSnackbarMessage("Posted successful");
       setSnackbarOpen(true);
     } else if (response.status === 409) {
+      setSeverity("error");
       setSnackbarMessage("Post failed!");
       setSnackbarOpen(true);
     }
@@ -190,7 +193,7 @@ const MyPostWidget = ({ picturePath }) => {
           autoHideDuration={4000}
           onClose={handleSnackbarClose}
         >
-          <Alert severity="error" onClose={handleSnackbarClose}>
+          <Alert severity={severity} onClose={handleSnackbarClose}>
             {snackbarMessage}
           </Alert>
         </Snackbar>

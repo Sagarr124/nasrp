@@ -45,6 +45,7 @@ const PostJobWidget = () => {
   const isNonMobileScreens = useMediaQuery("(min-width: 1000px)");
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [severity, setSeverity] = useState("error");
 
   const handleSnackbarClose = () => {
     setSnackbarOpen(false);
@@ -91,9 +92,11 @@ const PostJobWidget = () => {
     if (response.status === 201) {
       dispatch(setJobs({ jobs }));
       handleClose();
+      setSeverity("success");
       setSnackbarMessage("Job posted successfully!");
       setSnackbarOpen(true);
     } else if (response.status === 409) {
+      setSeverity("error");
       setSnackbarMessage("Job posting failed!");
       setSnackbarOpen(true);
     }
@@ -150,15 +153,7 @@ const PostJobWidget = () => {
             >
               POST JOB
             </Button>
-            <Snackbar
-              open={snackbarOpen}
-              autoHideDuration={4000}
-              onClose={handleSnackbarClose}
-            >
-              <Alert severity="error" onClose={handleSnackbarClose}>
-                {snackbarMessage}
-              </Alert>
-            </Snackbar>
+
             <Modal open={open} onClose={handleClose}>
               <Box
                 sx={{
@@ -246,7 +241,6 @@ const PostJobWidget = () => {
                           sx={{ gridColumn: "span 4" }}
                         />
                       </Box>
-
                       <Box>
                         <Button
                           fullWidth
@@ -262,6 +256,18 @@ const PostJobWidget = () => {
                         >
                           POST NOW
                         </Button>
+                        <Snackbar
+                          open={snackbarOpen}
+                          autoHideDuration={4000}
+                          onClose={handleSnackbarClose}
+                        >
+                          <Alert
+                            severity={severity}
+                            onClose={handleSnackbarClose}
+                          >
+                            {snackbarMessage}
+                          </Alert>
+                        </Snackbar>
                       </Box>
                     </form>
                   )}

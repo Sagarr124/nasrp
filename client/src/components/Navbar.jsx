@@ -41,7 +41,7 @@ const Navbar = () => {
   const [isMobileMenuToggled, setIsMobileMenuToggled] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { fullName } = useSelector((state) => state.user);
+  const { _id, fullName } = useSelector((state) => state.user);
   const token = useSelector((state) => state.token);
   const userMode = useSelector((state) => state.userMode);
   const notifications = useSelector((state) => state.notifications);
@@ -80,7 +80,7 @@ const Navbar = () => {
   const alt = theme.palette.background.alt;
 
   const getNotifications = async () => {
-    const response = await fetch("http://localhost:3001/notifications", {
+    const response = await fetch(`http://localhost:3001/notifications/${_id}`, {
       method: "GET",
       headers: { Authorization: `Bearer ${token}` },
     });
@@ -90,7 +90,7 @@ const Navbar = () => {
 
   useEffect(() => {
     getNotifications();
-  }, [userMode]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [userMode, anchorEl]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <FlexBetween padding="1rem 4%" backgroundColor={alt}>
@@ -175,20 +175,20 @@ const Navbar = () => {
                   </MenuItem>
                 ) : (
                   notifications.map((notification) => (
-                    <MenuItem key={notification.id}>
+                    <MenuItem key={notification._id}>
                       <ListItem alignItems="flex-start">
                         <ListItemAvatar>
                           <Avatar />
                         </ListItemAvatar>
                         <ListItemText
-                          primary={notification.message}
+                          primary={notification.text}
                           secondary={
                             <Typography
                               component="span"
                               variant="body2"
                               color="textSecondary"
                             >
-                              {notification.date.toLocaleString()}
+                              {notification.createdAt.toLocaleString()}
                             </Typography>
                           }
                         />
