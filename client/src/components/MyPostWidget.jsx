@@ -15,6 +15,8 @@ import {
   useTheme,
   Button,
   IconButton,
+  Snackbar,
+  Alert,
   useMediaQuery,
 } from "@mui/material";
 import FlexBetween from "./FlexBetween";
@@ -36,6 +38,12 @@ const MyPostWidget = ({ picturePath }) => {
   const isNonMobileScreens = useMediaQuery("(min-width: 1000px)");
   const mediumMain = palette.neutral.mediumMain;
   const medium = palette.neutral.medium;
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+
+  const handleSnackbarClose = () => {
+    setSnackbarOpen(false);
+  };
 
   const handlePost = async () => {
     const formData = new FormData();
@@ -51,10 +59,19 @@ const MyPostWidget = ({ picturePath }) => {
       headers: { Authorization: `Bearer ${token}` },
       body: formData,
     });
+
     const posts = await response.json();
-    dispatch(setPosts({ posts }));
-    setImage(null);
-    setPost("");
+
+    if (response.status === 201) {
+      dispatch(setPosts({ posts }));
+      setImage(null);
+      setPost("");
+      setSnackbarMessage("Posted successful");
+      setSnackbarOpen(true);
+    } else if (response.status === 409) {
+      setSnackbarMessage("Post failed!");
+      setSnackbarOpen(true);
+    }
   };
 
   return (
@@ -168,6 +185,15 @@ const MyPostWidget = ({ picturePath }) => {
         >
           POST
         </Button>
+        <Snackbar
+          open={snackbarOpen}
+          autoHideDuration={4000}
+          onClose={handleSnackbarClose}
+        >
+          <Alert severity="error" onClose={handleSnackbarClose}>
+            {snackbarMessage}
+          </Alert>
+        </Snackbar>
       </FlexBetween>
     </WidgetWrapper>
   );

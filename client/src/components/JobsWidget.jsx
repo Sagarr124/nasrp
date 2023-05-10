@@ -12,7 +12,7 @@ const JobsWidget = () => {
   const getJobs = async () => {
     const response = await fetch("http://localhost:3001/jobs", {
       method: "GET",
-      // headers: { Authorization: `Bearer ${token}` },
+      headers: { Authorization: `Bearer ${token}` },
     });
     const data = await response.json();
     dispatch(setJobs({ jobs: data }));

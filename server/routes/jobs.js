@@ -5,9 +5,9 @@ import { verifyToken } from "../middleware/auth.js";
 const router = express.Router();
 
 /* CREATE */
-router.post("/", postJob);
+router.post("/", verifyToken, postJob);
 
 /* READ */
-router.get("/", getJobs);
+router.get("/", verifyToken, getJobs);
 
 export default router;

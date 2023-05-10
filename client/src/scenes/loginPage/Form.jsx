@@ -104,8 +104,9 @@ const Form = () => {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(values),
     });
+
     const loggedIn = await loggedInResponse.json();
-    onSubmitProps.resetForm();
+
     if (loggedInResponse.status === 200) {
       dispatch(
         setLogin({
@@ -118,6 +119,8 @@ const Form = () => {
       setSnackbarMessage(loggedIn.msg);
       setSnackbarOpen(true);
     }
+
+    onSubmitProps.resetForm();
   };
 
   const forgotPassword = async (values, onSubmitProps) => {};
