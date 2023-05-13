@@ -17,18 +17,18 @@ import Navbar from "../../components/Navbar";
 
 // const socket = io("http://localhost:3001");
 
-const messages = [
-  { id: 1, name: "John Doe", message: "Hi there!" },
-  { id: 2, name: "Jane Doe", message: "Hello!" },
-  { id: 3, name: "John Doe", message: "How are you?" },
-  { id: 4, name: "Jane Doe", message: "I'm good, thanks. How about you?" },
-  { id: 5, name: "John Doe", message: "I'm doing well, thanks." },
-  { id: 1, name: "John Doe", message: "Hi there!" },
-  { id: 2, name: "Jane Doe", message: "Hello!" },
-  { id: 3, name: "John Doe", message: "How are you?" },
-  { id: 4, name: "Jane Doe", message: "I'm good, thanks. How about you?" },
-  { id: 5, name: "John Doe", message: "I'm doing well, thanks." },
-];
+// const messages = [
+//   { id: 1, name: "John Doe", message: "Hi there!" },
+//   { id: 2, name: "Jane Doe", message: "Hello!" },
+//   { id: 3, name: "John Doe", message: "How are you?" },
+//   { id: 4, name: "Jane Doe", message: "I'm good, thanks. How about you?" },
+//   { id: 5, name: "John Doe", message: "I'm doing well, thanks." },
+//   { id: 1, name: "John Doe", message: "Hi there!" },
+//   { id: 2, name: "Jane Doe", message: "Hello!" },
+//   { id: 3, name: "John Doe", message: "How are you?" },
+//   { id: 4, name: "Jane Doe", message: "I'm good, thanks. How about you?" },
+//   { id: 5, name: "John Doe", message: "I'm doing well, thanks." },
+// ];
 
 const MessagesPage = () => {
   const dispatch = useDispatch();
@@ -38,15 +38,13 @@ const MessagesPage = () => {
   const [currentMessage, setCurrentMessage] = useState("");
 
   const getUserMessages = async () => {
-    const response = await fetch(
-      `http://localhost:3001/messages/${userId}/messages`,
-      {
-        method: "GET",
-        headers: { Authorization: `Bearer ${token}` },
-      }
-    );
+    const response = await fetch(`http://localhost:3001/messages/${userId}`, {
+      method: "GET",
+      headers: { Authorization: `Bearer ${token}` },
+    });
     const data = await response.json();
-    dispatch(setMessages({ messages: data }));
+    // dispatch(setMessages({ messages: data }));
+    console.log(data);
   };
 
   const handleSend = () => {
@@ -55,6 +53,7 @@ const MessagesPage = () => {
 
   useEffect(() => {
     document.title = "NASRP - Messages";
+    getUserMessages();
   }, []);
 
   return (

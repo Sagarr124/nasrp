@@ -95,6 +95,7 @@ mongoose.connect(process.env.MONGO_URL, {
   useUnifiedTopology: true 
 })
 .then(() => {
+  console.log(`MongoDB connected successfully.`);
   app.listen(PORT, () => console.log(`Server Port: ${PORT}`));
 
   /* ADD DATA ONE TIME */
@@ -111,6 +112,16 @@ mongoose.connect(process.env.MONGO_URL, {
 .catch((error) => console.log(`${error} did not connect`));
 
 /* MESSAGING */
+const io = require("socket.io").listen(app);
+
+// Assign socket object to every request
+app.use(function (req, res, next) {
+  req.io = io;
+  next();
+});
+
+
+
 // const server = http.createServer(app);
 
 // // Set up socket.io instance

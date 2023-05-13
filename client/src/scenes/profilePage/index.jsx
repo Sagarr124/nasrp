@@ -1,4 +1,4 @@
-import { Box, useMediaQuery } from "@mui/material";
+import { Box, Button, useMediaQuery, useTheme } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
@@ -13,6 +13,7 @@ const ProfilePage = () => {
   const token = useSelector((state) => state.token);
   const loggedInUserId = useSelector((state) => state.user)._id;
   const isNonMobileScreens = useMediaQuery("(min-width:1000px)");
+  const { palette } = useTheme();
 
   const getUser = async () => {
     const response = await fetch(`http://localhost:3001/users/${userId}`, {
@@ -42,16 +43,29 @@ const ProfilePage = () => {
       >
         <Box flexBasis={isNonMobileScreens ? "28%" : undefined}>
           <UserWidget userId={userId} picturePath={user.picturePath} />
+          {loggedInUserId !== userId && (
+            <Button
+              fullWidth
+              sx={{
+                m: "2rem 0",
+                p: "0.75rem",
+                borderRadius: "0.75rem",
+                backgroundColor: palette.primary.main,
+                color: palette.background.alt,
+                "&:hover": { color: palette.primary.main },
+              }}
+              variant="outlined"
+            >
+              SEND A MESSAGE
+            </Button>
+          )}
         </Box>
         <Box
           flexBasis={isNonMobileScreens ? "52%" : undefined}
           mt={isNonMobileScreens ? undefined : "2rem"}
         >
           {loggedInUserId === userId && (
-            <>
-              <MyPostWidget picturePath={user.picturePath} />
-              <Box m="2rem 0" />
-            </>
+            <MyPostWidget picturePath={user.picturePath} />
           )}
 
           <PostsWidget

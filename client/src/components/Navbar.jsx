@@ -50,18 +50,6 @@ const Navbar = () => {
     userMode === "freelancer" ? true : false
   );
   const [anchorEl, setAnchorEl] = useState(null);
-  // const [notifications, setNotifications] = useState([
-  //   {
-  //     id: 1,
-  //     message: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-  //     date: new Date(),
-  //   },
-  //   {
-  //     id: 2,
-  //     message: "Pellentesque euismod justo quis lacus laoreet tincidunt.",
-  //     date: new Date(),
-  //   },
-  // ]);
 
   const handleOpen = (event) => {
     setAnchorEl(event.currentTarget);
