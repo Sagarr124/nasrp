@@ -23,6 +23,7 @@ import { createPost } from "./controllers/posts.js";
 import { verifyToken } from "./middleware/auth.js";
 import User from "./models/User.js";
 import Post from "./models/Post.js";
+import Conversation from "./models/Conversation.js";
 import Message from "./models/Message.js";
 import Client from "./models/Client.js";
 import Freelancer from "./models/Freelancer.js";
@@ -30,7 +31,7 @@ import Category from "./models/Category.js";
 import Job from "./models/Job.js";
 import Order from "./models/Order.js";
 import Payment from "./models/Payment.js";
-import { users, posts, messages, clients, freelancers, category, jobs, orders, payment } from "./data/index.js";
+import { users, posts, conversations, messages, clients, freelancers, category, jobs, orders, payment } from "./data/index.js";
 
 
 /* CONFIGURATIONS */
@@ -103,6 +104,7 @@ mongoose.connect(process.env.MONGO_URL, {
   // Post.insertMany(posts);
   // Client.insertMany(clients);
   // Freelancer.insertMany(freelancers);
+  // Conversation.insertMany(conversations);
   // Message.insertMany(messages);
   // Category.insertMany(category);
   // Job.insertMany(jobs);
@@ -112,13 +114,13 @@ mongoose.connect(process.env.MONGO_URL, {
 .catch((error) => console.log(`${error} did not connect`));
 
 /* MESSAGING */
-const io = require("socket.io").listen(app);
+// const io = require("socket.io").listen(app);
 
-// Assign socket object to every request
-app.use(function (req, res, next) {
-  req.io = io;
-  next();
-});
+// // Assign socket object to every request
+// app.use(function (req, res, next) {
+//   req.io = io;
+//   next();
+// });
 
 
 

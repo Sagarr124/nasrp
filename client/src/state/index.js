@@ -10,6 +10,7 @@ const initialState = {
   jobs: [],
   orders: [],
   categories: [],
+  conversations: [],
   messages: [],
   notifications: []
 };
@@ -33,6 +34,9 @@ export const authSlice = createSlice({
       state.token = null;
       state.posts = [];
       state.orders = [];
+      state.conversations = [];
+      state.messages = [];
+      state.notifications = [];
     },
     setPosts: (state, action) => {
       state.posts = action.payload.posts;
@@ -84,6 +88,16 @@ export const authSlice = createSlice({
       });
       state.users = updatedUsers;
     },
+    setConversations: (state, action) => {
+      state.conversations = action.payload.conversations;
+    },
+    setConversation: (state, action) => {
+      const updatedConversations = state.conversations.map((conversation) => {
+        if (conversation._id === action.payload.conversation._id) return action.payload.conversation;
+        return conversation;
+      });
+      state.conversations = updatedConversations;
+    },
     setMessages: (state, action) => {
       state.messages = action.payload.messages;
     },
@@ -107,6 +121,6 @@ export const authSlice = createSlice({
   },
 });
 
-export const { setMode, setUserMode, setLogin, setLogout, setPosts, setPost, setJobs, setJob, setCategories, setCategory, setOrders, setOrder, setUsers, setUser, setMessages, setMessage, setNotifications, setNotification } =
+export const { setMode, setUserMode, setLogin, setLogout, setPosts, setPost, setJobs, setJob, setCategories, setCategory, setOrders, setOrder, setUsers, setUser, setConversations, setConversation, setMessages, setMessage, setNotifications, setNotification } =
   authSlice.actions;
 export default authSlice.reducer;

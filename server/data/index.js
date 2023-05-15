@@ -771,68 +771,22 @@ export const orders = [
   }
 ];
 
+export const conversations = [
+  {
+    _id: new mongoose.Types.ObjectId(),
+    participants: [users[0]._id, users[1]._id]
+  },
+];
+
 
 export const messages = [
   {
     _id: new mongoose.Types.ObjectId(),
-    senderId: clients[0].userId,
-    receiverId: freelancers[0].userId,
-    message: "Hey, how are you doing?"
+    conversationId: conversations[0],
+    senderId: conversations[0].participants[0],
+    recipientId: conversations[0].participants[1],
+    content: "Hey, how are you doing?"
   },
-  {
-    _id: new mongoose.Types.ObjectId(),
-    senderId: clients[1].userId,
-    receiverId: freelancers[1].userId,
-    message: "I'm interested in hiring you for my project. Are you available?"
-  },
-  {
-    _id: new mongoose.Types.ObjectId(),
-    senderId: clients[2].userId,
-    receiverId: freelancers[2].userId,
-    message: "Can we schedule a call to discuss the details of the project?"
-  },
-  {
-    _id: new mongoose.Types.ObjectId(),
-    senderId: clients[3].userId,
-    receiverId: freelancers[3].userId,
-    message: "Thanks for getting back to me. I appreciate it."
-  },
-  {
-    _id: new mongoose.Types.ObjectId(),
-    senderId: clients[4].userId,
-    receiverId: freelancers[4].userId,
-    message: "Could you send me a portfolio of your work?"
-  },
-  {
-    _id: new mongoose.Types.ObjectId(),
-    senderId: freelancers[1].userId,
-    receiverId: clients[1].userId,
-    message: "I'm sorry, but I won't be able to take on your project at this time."
-  },
-  {
-    _id: new mongoose.Types.ObjectId(),
-    senderId: clients[5].userId,
-    receiverId: freelancers[5].userId,
-    message: "Thanks for the quick turnaround on this project. I'm very satisfied with the results."
-  },
-  {
-    _id: new mongoose.Types.ObjectId(),
-    senderId: clients[4].userId,
-    receiverId: freelancers[7].userId,
-    message: "I have a few questions about the scope of the project. Can we discuss it further?"
-  },
-  {
-    _id: new mongoose.Types.ObjectId(),
-    senderId: freelancers[2].userId,
-    receiverId: clients[2].userId,
-    message: "I'm sorry, but I won't be able to make our scheduled call today. Can we reschedule for another time?"
-  },
-  {
-    _id: new mongoose.Types.ObjectId(),
-    senderId: clients[5].userId, 
-    receiverId: freelancers[8].userId,
-    message: "Thanks for your help with this project. I'm glad we could work together."
-  }
 ];
 
 

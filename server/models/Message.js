@@ -2,25 +2,21 @@ import mongoose from "mongoose";
 
 const messageSchema = new mongoose.Schema(
   {
-    conversation: {
+    conversationId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Conversation',
     },
-    to: {
+    senderId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
     },
-    from: {
+    recipientId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
     },
-    body: {
+    content: {
       type: String,
       required: true,
-    },
-    date: {
-      type: String,
-      default: Date.now,
     },
   },
   { timestamps: true }

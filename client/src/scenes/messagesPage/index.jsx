@@ -3,48 +3,55 @@ import {
   Grid,
   List,
   ListItem,
+  ListItemButton,
+  ListItemAvatar,
   ListItemText,
   Paper,
   TextField,
   Button,
+  Typography,
   useMediaQuery,
+  useTheme,
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setMessages } from "../../state";
+import { setConversations, setMessages } from "../../state";
 import Navbar from "../../components/Navbar";
+import UserImage from "components/UserImage";
 // import io from "socket.io-client";
 
 // const socket = io("http://localhost:3001");
 
-// const messages = [
-//   { id: 1, name: "John Doe", message: "Hi there!" },
-//   { id: 2, name: "Jane Doe", message: "Hello!" },
-//   { id: 3, name: "John Doe", message: "How are you?" },
-//   { id: 4, name: "Jane Doe", message: "I'm good, thanks. How about you?" },
-//   { id: 5, name: "John Doe", message: "I'm doing well, thanks." },
-//   { id: 1, name: "John Doe", message: "Hi there!" },
-//   { id: 2, name: "Jane Doe", message: "Hello!" },
-//   { id: 3, name: "John Doe", message: "How are you?" },
-//   { id: 4, name: "Jane Doe", message: "I'm good, thanks. How about you?" },
-//   { id: 5, name: "John Doe", message: "I'm doing well, thanks." },
-// ];
-
 const MessagesPage = () => {
   const dispatch = useDispatch();
+  const { palette } = useTheme();
   const userId = useSelector((state) => state.user._id);
-  const { token, messages } = useSelector((state) => state);
+  const { token, conversations, messages } = useSelector((state) => state);
   const isNonMobileScreens = useMediaQuery("(min-width:1000px)");
   const [currentMessage, setCurrentMessage] = useState("");
 
-  const getUserMessages = async () => {
-    const response = await fetch(`http://localhost:3001/messages/${userId}`, {
-      method: "GET",
-      headers: { Authorization: `Bearer ${token}` },
-    });
+  const getUserConversations = async () => {
+    const response = await fetch(
+      `http://localhost:3001/messages/conversations/${userId}`,
+      {
+        method: "GET",
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
     const data = await response.json();
-    // dispatch(setMessages({ messages: data }));
-    console.log(data);
+    dispatch(setConversations({ conversations: data }));
+  };
+
+  const getConversationMessages = async (conversationId) => {
+    const response = await fetch(
+      `http://localhost:3001/messages/conversations/${conversationId}/messages`,
+      {
+        method: "GET",
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
+    const data = await response.json();
+    dispatch(setMessages({ messages: data }));
   };
 
   const handleSend = () => {
@@ -53,7 +60,8 @@ const MessagesPage = () => {
 
   useEffect(() => {
     document.title = "NASRP - Messages";
-    getUserMessages();
+    getUserConversations();
+    dispatch(setMessages({ messages: [] }));
   }, []);
 
   return (
@@ -69,14 +77,43 @@ const MessagesPage = () => {
         <Grid container spacing={2} sx={{ height: "100%" }}>
           <Grid item xs={12} sm={4} md={3}>
             <Paper sx={{ maxHeight: 500, overflow: "auto", height: 500 }}>
+              <Typography
+                fontSize={"1rem"}
+                fontWeight={500}
+                textAlign={"center"}
+                sx={{ p: 2, paddingBottom: 0 }}
+              >
+                Conversations
+              </Typography>
               <List>
-                {messages.map((message) => (
-                  <ListItem key={message.id} button>
+                {conversations.map((conversation) => (
+                  <ListItemButton
+                    key={conversation._id}
+                    onClick={() => getConversationMessages(conversation._id)}
+                  >
+                    <ListItemAvatar>
+                      <UserImage
+                        image={
+                          conversation.participants[0]._id !== userId
+                            ? conversation.participants[0].picturePath
+                            : conversation.participants[1].picturePath
+                        }
+                        size="45px"
+                      />
+                    </ListItemAvatar>
                     <ListItemText
-                      primary={message.name}
-                      secondary={message.message}
+                      primary={
+                        conversation.participants[0]._id !== userId
+                          ? conversation.participants[0].fullName
+                          : conversation.participants[1].fullName
+                      }
+                      secondary={
+                        conversation.participants[0]._id !== userId
+                          ? conversation.participants[0].userName
+                          : conversation.participants[1].userName
+                      }
                     />
-                  </ListItem>
+                  </ListItemButton>
                 ))}
               </List>
             </Paper>
@@ -85,8 +122,41 @@ const MessagesPage = () => {
             <Box
               sx={{ height: "100%", display: "flex", flexDirection: "column" }}
             >
-              <Paper sx={{ flexGrow: 1, overflow: "auto" }}>
-                {/* Current conversation messages */}
+              <Paper fullWidth sx={{ padding: 2 }}></Paper>
+              <Paper sx={{ flexGrow: 1, overflow: "auto", maxHeight: 450 }}>
+                <List>
+                  {messages.map((message) => (
+                    <ListItem
+                      key={message._id}
+                      sx={{
+                        display: "flex",
+                        justifyContent:
+                          message.senderId === userId
+                            ? "flex-end"
+                            : "flex-start",
+                      }}
+                    >
+                      <ListItemText
+                        primary={message.content}
+                        sx={{
+                          padding: 2,
+                          border: "1px solid black",
+                          backgroundColor:
+                            message.senderId === userId
+                              ? palette.background.alt
+                              : palette.background.default,
+                          borderRadius:
+                            message.senderId === userId
+                              ? "10px 0 10px 10px"
+                              : "0 10px 10px 10px",
+                          boxShadow: "-3px 4px 4px 0px rgba(0,0,0,0.08)",
+                          marginTop: 1,
+                          maxWidth: "25rem",
+                        }}
+                      />
+                    </ListItem>
+                  ))}
+                </List>
               </Paper>
               <Box sx={{ display: "flex", alignItems: "center" }}>
                 <TextField
