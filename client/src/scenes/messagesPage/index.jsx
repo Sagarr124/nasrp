@@ -13,7 +13,7 @@ import {
   useMediaQuery,
   useTheme,
 } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setConversations, setMessages } from "../../state";
 import Navbar from "../../components/Navbar";
@@ -29,7 +29,8 @@ const MessagesPage = () => {
   const [currentMessage, setCurrentMessage] = useState("");
   const [conversationId, setConversationId] = useState("");
   const [recipientId, setRecipientId] = useState("");
-  // const socket = io("http://localhost:3001");
+  const socket = io("http://localhost:3001");
+  const messagesEndRef = useRef(null);
 
   const getUserConversations = async () => {
     const response = await fetch(
@@ -55,9 +56,14 @@ const MessagesPage = () => {
     dispatch(setMessages({ messages: data }));
   };
 
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
   const sendMessage = (message) => {
-    // socket.emit("chat message", message);
-    console.log(message);
+    socket.emit("chat message", message);
+    setCurrentMessage("");
+    getConversationMessages(message.conversationId);
   };
 
   useEffect(() => {
@@ -66,15 +72,24 @@ const MessagesPage = () => {
     dispatch(setMessages({ messages: [] }));
   }, [conversationId]);
 
-  // useEffect(() => {
-  //   socket.on("connect", () => {
-  //     console.log("Connected to Socket.IO server");
-  //   });
+  useEffect(() => {
+    socket.on("connect", () => {
+      console.log("Connected to Socket.IO server");
+    });
 
-  //   socket.on("chat message", (message) => {
-  //     console.log("received message:", message);
-  //   });
-  // });
+    socket.on("chat message", (message) => {
+      console.log("received message:", message);
+      setMessages((prevMessages) => [...prevMessages, message]);
+    });
+
+    return () => {
+      socket.disconnect();
+    };
+  });
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
 
   return (
     <Box>
@@ -105,6 +120,7 @@ const MessagesPage = () => {
                       setConversationId(conversation._id);
                       getConversationMessages(conversation._id);
                       conversations.find((conversation) =>
+                        conversation._id === conversationId &&
                         conversation.participants[0]._id !== userId
                           ? setRecipientId(conversation.participants[0]._id)
                           : setRecipientId(conversation.participants[1]._id)
@@ -142,7 +158,24 @@ const MessagesPage = () => {
             <Box
               sx={{ height: "100%", display: "flex", flexDirection: "column" }}
             >
-              <Paper sx={{ padding: 2 }}></Paper>
+              {conversationId && (
+                <Paper sx={{ padding: 2 }}>
+                  <List>
+                    <ListItemAvatar>
+                      <UserImage
+                        image={conversations.find((conversation) =>
+                          conversation._id === conversationId &&
+                          conversation.participants[0]._id !== userId
+                            ? conversation.participants[0].picturePath
+                            : conversation.participants[1].picturePath
+                        )}
+                        size="45px"
+                      />
+                    </ListItemAvatar>
+                    <ListItemText primary={"Sagar"} secondary={"sagar"} />
+                  </List>
+                </Paper>
+              )}
               <Paper sx={{ flexGrow: 1, overflow: "auto", maxHeight: 450 }}>
                 <List>
                   {messages.map((message) => (
@@ -176,6 +209,7 @@ const MessagesPage = () => {
                       />
                     </ListItem>
                   ))}
+                  <div ref={messagesEndRef} />
                 </List>
               </Paper>
               <Box sx={{ display: "flex", alignItems: "center" }}>

@@ -41,8 +41,12 @@ const __dirname = path.dirname(__filename);
 dotenv.config();
 
 const app = express();
-// const server = http.createServer(app);
-// const io = new Server(server);
+const server = http.createServer(app);
+const io = new Server(server, {
+  cors: {
+    origin: "http://localhost:3000",
+  },
+});
 
 app.use(express.json());
 app.use(helmet());
@@ -52,40 +56,40 @@ app.use(bodyParser.json({ limit: "30mb", extended: true }));
 app.use(bodyParser.urlencoded({ limit: "30mb", extended: true }));
 app.use(cors());
 app.use("/assets", express.static(path.join(__dirname, "public/assets")));
-// app.use(function(req, res, next) {
-//   res.header("Access-Control-Allow-Origin", "*");
-//   res.header(
-//     "Access-Control-Allow-Headers",
-//     "Origin, X-Requested-With, Content-Type, Accept"
-//   );
-//   next();
-// });
+app.use(function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept"
+  );
+  next();
+});
 
 
 /* MESSAGING */
-// io.on('connection', (socket) => {
-//   console.log('a user connected');
+io.on('connection', (socket) => {
+  console.log('a user connected');
 
-//   socket.on('chat message', async (message) => {
-//     console.log('received message:', message);
+  socket.on('chat message', async (message) => {
+    console.log('received message:', message);
 
-//     const newMessage = new Message({
-//       conversationId: message.conversationId,
-//       senderId: message.senderId,
-//       recipientId: message.recipientId,
-//       content: message.content,
-//     });
+    const newMessage = new Message({
+      conversationId: message.conversationId,
+      senderId: message.senderId,
+      recipientId: message.recipientId,
+      content: message.content,
+    });
 
-//     try {
-//       const savedMessage = await newMessage.save();
-//       console.log('Message saved to database:', savedMessage);
+    try {
+      const savedMessage = await newMessage.save();
+      console.log('Message saved to database:', savedMessage);
 
-//       io.emit('chat message', savedMessage);
-//     } catch (err) {
-//       console.error('Error saving message:', err);
-//     }
-//   });
-// });
+      io.to(recipientId).emit('chat message', savedMessage);
+    } catch (err) {
+      console.error('Error saving message:', err);
+    }
+  });
+});
 
 
 /* FILE STORAGE */
@@ -123,7 +127,6 @@ mongoose.connect(process.env.MONGO_URL, {
 })
 .then(() => {
   console.log(`MongoDB connected successfully.`);
-  // app.listen(PORT, () => console.log(`Server Port: ${PORT}`));
 
   /* ADD DATA ONE TIME */
   // User.insertMany(users);
@@ -142,4 +145,4 @@ mongoose.connect(process.env.MONGO_URL, {
 
 const PORT = process.env.PORT || 6001;
 
-app.listen(PORT, () => console.log(`Server Port: ${PORT}`));
+server.listen(PORT, () => console.log(`Server Port: ${PORT}`));
