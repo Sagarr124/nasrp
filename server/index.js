@@ -41,6 +41,8 @@ const __dirname = path.dirname(__filename);
 dotenv.config();
 
 const app = express();
+// const server = http.createServer(app);
+// const io = new Server(server);
 
 app.use(express.json());
 app.use(helmet());
@@ -50,14 +52,40 @@ app.use(bodyParser.json({ limit: "30mb", extended: true }));
 app.use(bodyParser.urlencoded({ limit: "30mb", extended: true }));
 app.use(cors());
 app.use("/assets", express.static(path.join(__dirname, "public/assets")));
-app.use(function(req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header(
-    "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept"
-  );
-  next();
-});
+// app.use(function(req, res, next) {
+//   res.header("Access-Control-Allow-Origin", "*");
+//   res.header(
+//     "Access-Control-Allow-Headers",
+//     "Origin, X-Requested-With, Content-Type, Accept"
+//   );
+//   next();
+// });
+
+
+/* MESSAGING */
+// io.on('connection', (socket) => {
+//   console.log('a user connected');
+
+//   socket.on('chat message', async (message) => {
+//     console.log('received message:', message);
+
+//     const newMessage = new Message({
+//       conversationId: message.conversationId,
+//       senderId: message.senderId,
+//       recipientId: message.recipientId,
+//       content: message.content,
+//     });
+
+//     try {
+//       const savedMessage = await newMessage.save();
+//       console.log('Message saved to database:', savedMessage);
+
+//       io.emit('chat message', savedMessage);
+//     } catch (err) {
+//       console.error('Error saving message:', err);
+//     }
+//   });
+// });
 
 
 /* FILE STORAGE */
@@ -89,15 +117,13 @@ app.use("/notifications", notificationRoutes);
 
 
 /* MONGOOSE SETUP */
-const PORT = process.env.PORT || 6001;
-
 mongoose.connect(process.env.MONGO_URL, { 
   useNewUrlParser: true, 
   useUnifiedTopology: true 
 })
 .then(() => {
   console.log(`MongoDB connected successfully.`);
-  app.listen(PORT, () => console.log(`Server Port: ${PORT}`));
+  // app.listen(PORT, () => console.log(`Server Port: ${PORT}`));
 
   /* ADD DATA ONE TIME */
   // User.insertMany(users);
@@ -113,50 +139,7 @@ mongoose.connect(process.env.MONGO_URL, {
 })
 .catch((error) => console.log(`${error} did not connect`));
 
-/* MESSAGING */
-// const io = require("socket.io").listen(app);
 
-// // Assign socket object to every request
-// app.use(function (req, res, next) {
-//   req.io = io;
-//   next();
-// });
+const PORT = process.env.PORT || 6001;
 
-
-
-// const server = http.createServer(app);
-
-// // Set up socket.io instance
-// const io = new Server(server, {
-//   cors: {
-//     origin: "http://localhost:3000",
-//     methods: ["GET", "POST"],
-//   },
-// });
-
-// // Listen for incoming socket connections
-// io.on("connection", (socket) => {
-//   console.log("New client connected");
-
-//   // Retrieve previous messages and emit them to the client
-//   Message.find({}, (err, messages) => {
-//     if (err) console.error(err);
-//     socket.emit("message history", messages);
-//   });
-
-//   // Handle incoming socket events here
-//   socket.on("send message", (data) => {
-//     const message = new Message({
-//       senderId: data.senderId,
-//       receiverId: data.receiverId,
-//       message: data.message,
-//     });
-//     message.save((err) => {
-//       if (err) console.error(err);
-//       io.emit("receive message", message);
-//     });
-//   });
-// });
-
-
-// server.listen(PORT, () => console.log(`Server Port: ${PORT}`));
+app.listen(PORT, () => console.log(`Server Port: ${PORT}`));

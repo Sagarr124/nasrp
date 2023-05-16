@@ -18,9 +18,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setConversations, setMessages } from "../../state";
 import Navbar from "../../components/Navbar";
 import UserImage from "components/UserImage";
-// import io from "socket.io-client";
-
-// const socket = io("http://localhost:3001");
+import io from "socket.io-client";
 
 const MessagesPage = () => {
   const dispatch = useDispatch();
@@ -29,6 +27,9 @@ const MessagesPage = () => {
   const { token, conversations, messages } = useSelector((state) => state);
   const isNonMobileScreens = useMediaQuery("(min-width:1000px)");
   const [currentMessage, setCurrentMessage] = useState("");
+  const [conversationId, setConversationId] = useState("");
+  const [recipientId, setRecipientId] = useState("");
+  // const socket = io("http://localhost:3001");
 
   const getUserConversations = async () => {
     const response = await fetch(
@@ -54,15 +55,26 @@ const MessagesPage = () => {
     dispatch(setMessages({ messages: data }));
   };
 
-  const handleSend = () => {
-    // Send message logic
+  const sendMessage = (message) => {
+    // socket.emit("chat message", message);
+    console.log(message);
   };
 
   useEffect(() => {
     document.title = "NASRP - Messages";
     getUserConversations();
     dispatch(setMessages({ messages: [] }));
-  }, []);
+  }, [conversationId]);
+
+  // useEffect(() => {
+  //   socket.on("connect", () => {
+  //     console.log("Connected to Socket.IO server");
+  //   });
+
+  //   socket.on("chat message", (message) => {
+  //     console.log("received message:", message);
+  //   });
+  // });
 
   return (
     <Box>
@@ -89,7 +101,15 @@ const MessagesPage = () => {
                 {conversations.map((conversation) => (
                   <ListItemButton
                     key={conversation._id}
-                    onClick={() => getConversationMessages(conversation._id)}
+                    onClick={() => {
+                      setConversationId(conversation._id);
+                      getConversationMessages(conversation._id);
+                      conversations.find((conversation) =>
+                        conversation.participants[0]._id !== userId
+                          ? setRecipientId(conversation.participants[0]._id)
+                          : setRecipientId(conversation.participants[1]._id)
+                      );
+                    }}
                   >
                     <ListItemAvatar>
                       <UserImage
@@ -122,7 +142,7 @@ const MessagesPage = () => {
             <Box
               sx={{ height: "100%", display: "flex", flexDirection: "column" }}
             >
-              <Paper fullWidth sx={{ padding: 2 }}></Paper>
+              <Paper sx={{ padding: 2 }}></Paper>
               <Paper sx={{ flexGrow: 1, overflow: "auto", maxHeight: 450 }}>
                 <List>
                   {messages.map((message) => (
@@ -163,15 +183,25 @@ const MessagesPage = () => {
                   placeholder="Type your message here..."
                   value={currentMessage}
                   onChange={(e) => setCurrentMessage(e.target.value)}
+                  disabled={recipientId === ""}
                   fullWidth
                   multiline
+                  required
                   maxRows={4}
                   sx={{ mr: 1 }}
                 />
                 <Button
                   variant="contained"
+                  disabled={!currentMessage}
                   sx={{ padding: "0.75rem" }}
-                  onClick={handleSend}
+                  onClick={() =>
+                    sendMessage({
+                      conversationId: conversationId,
+                      senderId: userId,
+                      recipientId: recipientId,
+                      content: currentMessage,
+                    })
+                  }
                 >
                   Send
                 </Button>
