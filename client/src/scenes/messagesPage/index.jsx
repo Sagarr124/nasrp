@@ -15,6 +15,7 @@ import {
 } from "@mui/material";
 import { useEffect, useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { setConversations, setMessages } from "../../state";
 import Navbar from "../../components/Navbar";
 import UserImage from "components/UserImage";
@@ -31,6 +32,7 @@ const MessagesPage = () => {
   const [recipientId, setRecipientId] = useState("");
   const socket = io("http://localhost:3001");
   const messagesEndRef = useRef(null);
+  const navigate = useNavigate();
 
   const getUserConversations = async () => {
     const response = await fetch(
@@ -70,7 +72,7 @@ const MessagesPage = () => {
     document.title = "NASRP - Messages";
     getUserConversations();
     dispatch(setMessages({ messages: [] }));
-  }, [conversationId]);
+  }, [conversationId]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     socket.on("connect", () => {
@@ -78,7 +80,7 @@ const MessagesPage = () => {
     });
 
     socket.on("chat message", (message) => {
-      console.log("received message:", message);
+      console.log("received message at client-end:", message);
       setMessages((prevMessages) => [...prevMessages, message]);
     });
 
@@ -119,12 +121,11 @@ const MessagesPage = () => {
                     onClick={() => {
                       setConversationId(conversation._id);
                       getConversationMessages(conversation._id);
-                      conversations.find((conversation) =>
-                        conversation._id === conversationId &&
+                      const recipient =
                         conversation.participants[0]._id !== userId
-                          ? setRecipientId(conversation.participants[0]._id)
-                          : setRecipientId(conversation.participants[1]._id)
-                      );
+                          ? conversation.participants[0]._id
+                          : conversation.participants[1]._id;
+                      setRecipientId(recipient);
                     }}
                   >
                     <ListItemAvatar>
@@ -158,21 +159,68 @@ const MessagesPage = () => {
             <Box
               sx={{ height: "100%", display: "flex", flexDirection: "column" }}
             >
-              {conversationId && (
-                <Paper sx={{ padding: 2 }}>
+              {conversationId && recipientId && (
+                <Paper>
                   <List>
-                    <ListItemAvatar>
-                      <UserImage
-                        image={conversations.find((conversation) =>
-                          conversation._id === conversationId &&
-                          conversation.participants[0]._id !== userId
-                            ? conversation.participants[0].picturePath
-                            : conversation.participants[1].picturePath
-                        )}
-                        size="45px"
+                    <ListItemButton
+                      onClick={() => {
+                        navigate(`/profile/${recipientId}`);
+                        navigate(0);
+                      }}
+                    >
+                      <ListItemAvatar>
+                        <UserImage
+                          image={
+                            conversations.find(
+                              (conversation) =>
+                                conversation._id === conversationId
+                            )?.participants[0]._id !== userId
+                              ? conversations.find(
+                                  (conversation) =>
+                                    conversation._id === conversationId
+                                )?.participants[0].picturePath
+                              : conversations.find(
+                                  (conversation) =>
+                                    conversation._id === conversationId
+                                )?.participants[1].picturePath
+                          }
+                          size="50px"
+                        />
+                      </ListItemAvatar>
+                      <ListItemText
+                        primary={
+                          conversations.find(
+                            (conversation) =>
+                              conversation._id === conversationId
+                          )?.participants[0]._id !== userId
+                            ? conversations.find(
+                                (conversation) =>
+                                  conversation._id === conversationId
+                              )?.participants[0].fullName
+                            : conversations.find(
+                                (conversation) =>
+                                  conversation._id === conversationId
+                              )?.participants[1].fullName
+                        }
+                        secondary={
+                          conversations.find(
+                            (conversation) =>
+                              conversation._id === conversationId
+                          )?.participants[0]._id !== userId
+                            ? conversations.find(
+                                (conversation) =>
+                                  conversation._id === conversationId
+                              )?.participants[0].userName
+                            : conversations.find(
+                                (conversation) =>
+                                  conversation._id === conversationId
+                              )?.participants[1].userName
+                        }
+                        sx={{
+                          fontWeight: "bold",
+                        }}
                       />
-                    </ListItemAvatar>
-                    <ListItemText primary={"Sagar"} secondary={"sagar"} />
+                    </ListItemButton>
                   </List>
                 </Paper>
               )}
@@ -191,8 +239,9 @@ const MessagesPage = () => {
                     >
                       <ListItemText
                         primary={message.content}
+                        secondary={message.createdAt.toLocaleString()}
                         sx={{
-                          padding: 2,
+                          padding: 1.5,
                           border: "1px solid black",
                           backgroundColor:
                             message.senderId === userId
@@ -222,12 +271,12 @@ const MessagesPage = () => {
                   multiline
                   required
                   maxRows={4}
-                  sx={{ mr: 1 }}
+                  sx={{ mr: 1, mt: "0.5rem" }}
                 />
                 <Button
                   variant="contained"
                   disabled={!currentMessage}
-                  sx={{ padding: "0.75rem" }}
+                  sx={{ padding: "1rem", mt: "0.5rem" }}
                   onClick={() =>
                     sendMessage({
                       conversationId: conversationId,

@@ -71,7 +71,7 @@ io.on('connection', (socket) => {
   console.log('a user connected');
 
   socket.on('chat message', async (message) => {
-    console.log('received message:', message);
+    console.log('received message at server-side:', message);
 
     const newMessage = new Message({
       conversationId: message.conversationId,

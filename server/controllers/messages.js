@@ -35,25 +35,27 @@ export const getConversationMessages = async (req, res) => {
 /* CREATE */
 export const createConversation = async (req, res) => {
   try {
-    const { client, freelancer } = req.body;
+    const { senderId, recipientId } = req.body;
 
-    // Check if the conversation already exists
-    const existingConversation = await Conversation.findOne({
-      participants: { $all: [client, freelancer] },
-    });
+    console.log(senderId);
 
-    if (existingConversation) {
-      return res.status(409).json({ message: 'Conversation already exists.' });
-    }
+  //   // Check if the conversation already exists
+  //   const existingConversation = await Conversation.findOne({
+  //     participants: { $all: [senderId, recipientId] },
+  //   });
 
-    // Create a new conversation
-    const newConversation = new Conversation({
-      participants: [client, freelancer],
-    });
+  //   if (existingConversation) {
+  //     return res.status(409).json({ message: 'Conversation already exists.' });
+  //   }
 
-    await newConversation.save();
+  //   // Create a new conversation
+  //   const newConversation = new Conversation({
+  //     participants: [senderId, recipientId],
+  //   });
 
-    res.status(201).json(newConversation);
+  //   await newConversation.save();
+
+  //   res.status(201).json(newConversation);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

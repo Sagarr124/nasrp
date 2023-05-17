@@ -9,7 +9,7 @@ router.get("/conversations/:userId", verifyToken, getUserConversations);
 router.get("/conversations/:conversationId/messages", verifyToken, getConversationMessages);
 
 /* CREATE */
-router.post("/conversations", verifyToken, createConversation);
-router.post("/", verifyToken, sendMessage);
+router.post("/", verifyToken, createConversation);
+// router.post("/", verifyToken, sendMessage);
 
 export default router;
