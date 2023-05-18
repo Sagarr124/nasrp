@@ -26,7 +26,7 @@ const ProfilePage = () => {
   };
 
   const createConversation = async (senderId, recipientId) => {
-    const response = await fetch(`https://localhost:3001/messages`, {
+    const response = await fetch(`http://localhost:3001/messages`, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -88,7 +88,13 @@ const ProfilePage = () => {
         </Box>
         <Box
           flexBasis={isNonMobileScreens ? "52%" : undefined}
-          mt={isNonMobileScreens ? undefined : "2rem"}
+          mt={
+            isNonMobileScreens
+              ? loggedInUserId !== userId
+                ? "-2rem"
+                : undefined
+              : "2rem"
+          }
         >
           {loggedInUserId === userId && (
             <MyPostWidget picturePath={user.picturePath} />

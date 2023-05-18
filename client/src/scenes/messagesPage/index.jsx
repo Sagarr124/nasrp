@@ -118,6 +118,7 @@ const MessagesPage = () => {
                 {conversations.map((conversation) => (
                   <ListItemButton
                     key={conversation._id}
+                    selected={conversation._id === conversationId}
                     onClick={() => {
                       setConversationId(conversation._id);
                       getConversationMessages(conversation._id);
