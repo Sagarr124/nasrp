@@ -50,6 +50,7 @@ const Navbar = () => {
     userMode === "freelancer" ? true : false
   );
   const [anchorEl, setAnchorEl] = useState(null);
+  const [searchText, setSearchText] = useState("");
 
   const handleOpen = (event) => {
     setAnchorEl(event.currentTarget);
@@ -58,6 +59,18 @@ const Navbar = () => {
   const handleClose = () => {
     setAnchorEl(null);
   };
+
+  const handleChange = (event) => {
+    setSearchText(event.target.value);
+  };
+
+  const handleKeyDown = (event) => {
+    if (event.key === "Enter" && searchText.trim().length !== 0) {
+      navigate("/search", { state: { searchText } });
+    }
+  };
+
+  const handleSearch = () => {};
 
   const theme = useTheme();
   const neutralLight = theme.palette.neutral.light;
@@ -99,19 +112,22 @@ const Navbar = () => {
             NASRP
           </Typography>
         </Tooltip>
-        {isNonMobileScreens && (
-          <FlexBetween
-            backgroundColor={neutralLight}
-            borderRadius="9px"
-            gap="3rem"
-            padding="0.1rem 1.5rem"
-          >
-            <InputBase placeholder="Search..." />
-            <IconButton>
-              <Search />
-            </IconButton>
-          </FlexBetween>
-        )}
+        <FlexBetween
+          backgroundColor={neutralLight}
+          borderRadius="9px"
+          gap="3rem"
+          padding="0.1rem 1.5rem"
+        >
+          <InputBase
+            placeholder="Search..."
+            value={searchText}
+            onChange={handleChange}
+            onKeyDown={handleKeyDown}
+          />
+          <IconButton onClick={handleSearch}>
+            <Search />
+          </IconButton>
+        </FlexBetween>
       </FlexBetween>
 
       {/* DESKTOP NAV */}

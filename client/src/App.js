@@ -6,6 +6,7 @@ import ProfilePage from "./scenes/profilePage";
 import MessagesPage from "./scenes/messagesPage";
 import JobsPage from "./scenes/jobsPage";
 import OrdersPage from "./scenes/ordersPage";
+import SearchPage from "scenes/searchPage";
 import { useMemo } from "react";
 import { useSelector } from "react-redux";
 import { CssBaseline, ThemeProvider } from "@mui/material";
@@ -45,6 +46,10 @@ function App() {
             <Route
               path="/orders"
               element={isAuth ? <OrdersPage /> : <Navigate to="/" />}
+            />
+            <Route
+              path="/search"
+              element={isAuth ? <SearchPage /> : <Navigate to="/" />}
             />
           </Routes>
         </ThemeProvider>

@@ -13,7 +13,7 @@ export const getUser = async (req, res) => {
 
 export const getUsers = async (req, res) => {
   try {
-    const users = await User.find().select('fullName picturePath');
+    const users = await User.find().select('fullName userName picturePath description country phoneNumber rating');
     res.status(200).json(users);
   } catch (err) {
     res.status(404).json({ message: err.message });
