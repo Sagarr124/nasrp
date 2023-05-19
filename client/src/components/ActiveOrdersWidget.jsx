@@ -8,13 +8,29 @@ import {
   TableContainer,
   useTheme,
 } from "@mui/material";
+import { useSelector } from "react-redux";
 import WidgetWrapper from "./WidgetWrapper";
 import OrdersWidget from "./OrdersWidget";
 
 const ActiveOrdersWidget = ({ userId, page }) => {
+  const { orders } = useSelector((state) => state);
   const { palette } = useTheme();
   const dark = palette.neutral.dark;
   const medium = palette.neutral.medium;
+
+  const activeOrderCount = orders.reduce((count, order) => {
+    if (new Date(order.endDate) > new Date()) {
+      return count + 1;
+    }
+    return count;
+  }, 0);
+
+  const totalPriceOfActiveOrders = orders.reduce((totalPrice, order) => {
+    if (new Date(order.endDate) > new Date()) {
+      return totalPrice + order.amount;
+    }
+    return totalPrice;
+  }, 0);
 
   return (
     <WidgetWrapper>
@@ -24,7 +40,7 @@ const ActiveOrdersWidget = ({ userId, page }) => {
         </Typography>
         <Typography fontSize="medium" color={medium} fontWeight="500">
           {" "}
-          - 0 {"(Rs. 0)"}
+          - {activeOrderCount} {`(Rs. ${totalPriceOfActiveOrders})`}
         </Typography>
       </Grid>
 
