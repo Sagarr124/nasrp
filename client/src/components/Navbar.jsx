@@ -18,6 +18,8 @@ import {
   useTheme,
   useMediaQuery,
   Stack,
+  Modal,
+  Button,
 } from "@mui/material";
 import {
   Search,
@@ -41,6 +43,14 @@ const Navbar = () => {
   const [isMobileMenuToggled, setIsMobileMenuToggled] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const theme = useTheme();
+  const neutralLight = theme.palette.neutral.light;
+  const dark = theme.palette.neutral.dark;
+  const neutralMain = theme.palette.neutral.main;
+  const main = theme.palette.background.main;
+  const background = theme.palette.background.default;
+  const primaryMain = theme.palette.primary.main;
+  const alt = theme.palette.background.alt;
   const { _id, fullName } = useSelector((state) => state.user);
   const token = useSelector((state) => state.token);
   const userMode = useSelector((state) => state.userMode);
@@ -51,6 +61,8 @@ const Navbar = () => {
   );
   const [anchorEl, setAnchorEl] = useState(null);
   const [searchText, setSearchText] = useState("");
+  const [modal, setModal] = useState(false);
+  const [notificationText, setNotificationText] = useState("");
 
   const handleOpen = (event) => {
     setAnchorEl(event.currentTarget);
@@ -70,15 +82,16 @@ const Navbar = () => {
     }
   };
 
-  const handleSearch = () => {};
+  const handleSearch = () => {
+    navigate("/search", { state: { searchText } });
+  };
 
-  const theme = useTheme();
-  const neutralLight = theme.palette.neutral.light;
-  const dark = theme.palette.neutral.dark;
-  const neutralMain = theme.palette.neutral.main;
-  const background = theme.palette.background.default;
-  const primaryMain = theme.palette.primary.main;
-  const alt = theme.palette.background.alt;
+  const handleModalOpen = (notificationText) => {
+    setNotificationText(notificationText);
+    setModal(true);
+  };
+
+  const handleModalClose = () => setModal(false);
 
   const getNotifications = async () => {
     const response = await fetch(`http://localhost:3001/notifications/${_id}`, {
@@ -179,7 +192,10 @@ const Navbar = () => {
                   </MenuItem>
                 ) : (
                   notifications.map((notification) => (
-                    <MenuItem key={notification._id}>
+                    <MenuItem
+                      key={notification._id}
+                      onClick={() => handleModalOpen(notification.text)}
+                    >
                       <ListItem alignItems="flex-start">
                         <ListItemAvatar>
                           <Avatar />
@@ -202,6 +218,64 @@ const Navbar = () => {
                 )}
               </Menu>
             )}
+            <Modal open={modal} onClose={handleModalClose}>
+              <Box
+                sx={{
+                  position: "absolute",
+                  top: "50%",
+                  left: "50%",
+                  transform: "translate(-50%, -50%)",
+                  width: "22rem",
+                  bgcolor: "white",
+                  border: "2px solid #000",
+                  borderRadius: "1rem",
+                  boxShadow: 24,
+                  p: 4,
+                }}
+              >
+                <Typography
+                  fontSize={"1rem"}
+                  fontWeight={"600"}
+                  marginBottom={"1rem"}
+                  textAlign={"center"}
+                >
+                  Notification Details
+                </Typography>
+                <Typography fontSize={"1rem"} marginBottom={"1rem"}>
+                  {notificationText}
+                </Typography>
+                <FlexBetween>
+                  <Button
+                    onClick={handleModalClose}
+                    sx={{
+                      m: "1rem 0",
+                      p: "0.75rem 2rem",
+                      borderRadius: "3rem",
+                      color: main,
+                      "&:hover": { color: primaryMain },
+                    }}
+                    variant="outlined"
+                  >
+                    Reject
+                  </Button>
+                  <Button
+                    onClick={""}
+                    sx={{
+                      m: "1rem 0",
+                      p: "0.25rem 2rem",
+                      marginLeft: "2rem",
+                      borderRadius: "3rem",
+                      backgroundColor: primaryMain,
+                      color: alt,
+                      "&:hover": { color: primaryMain },
+                    }}
+                    variant="outlined"
+                  >
+                    Accept & <br /> Pay Now
+                  </Button>
+                </FlexBetween>
+              </Box>
+            </Modal>
           </>
           <Tooltip title="Help">
             <IconButton onClick={() => navigate("")}>
