@@ -37,7 +37,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setMode, setUserMode, setLogout } from "../state";
 import { useNavigate } from "react-router-dom";
 import FlexBetween from "./FlexBetween";
-import { setNotifications } from "../state";
+import { setNotifications, setNotification } from "../state";
 
 const Navbar = () => {
   const [isMobileMenuToggled, setIsMobileMenuToggled] = useState(false);
@@ -62,6 +62,7 @@ const Navbar = () => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [searchText, setSearchText] = useState("");
   const [modal, setModal] = useState(false);
+  const [notificationId, setNotificationId] = useState("");
   const [notificationText, setNotificationText] = useState("");
 
   const handleOpen = (event) => {
@@ -86,7 +87,8 @@ const Navbar = () => {
     navigate("/search", { state: { searchText } });
   };
 
-  const handleModalOpen = (notificationText) => {
+  const handleModalOpen = (notificationId, notificationText) => {
+    setNotificationId(notificationId);
     setNotificationText(notificationText);
     setModal(true);
   };
@@ -102,9 +104,22 @@ const Navbar = () => {
     dispatch(setNotifications({ notifications: data }));
   };
 
+  const readNotification = async (notificationId) => {
+    const response = await fetch(
+      `http://localhost:3001/notifications/${notificationId}/read`,
+      {
+        method: "PATCH",
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
+    const updatedNotification = await response.json();
+    dispatch(setNotification({ notification: updatedNotification }));
+    handleModalClose();
+  };
+
   useEffect(() => {
     getNotifications();
-  }, [userMode, anchorEl]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [userMode, anchorEl, notificationId, notificationText]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <FlexBetween padding="1rem 4%" backgroundColor={alt}>
@@ -173,7 +188,13 @@ const Navbar = () => {
           <>
             <Tooltip title="Notifications">
               <IconButton onClick={handleOpen}>
-                <Badge badgeContent={notifications.length} color="error">
+                <Badge
+                  badgeContent={
+                    notifications.filter((notification) => !notification.read)
+                      .length
+                  }
+                  color="error"
+                >
                   <NotificationsOutlined
                     sx={{ color: dark, fontSize: "25px" }}
                   />
@@ -194,7 +215,9 @@ const Navbar = () => {
                   notifications.map((notification) => (
                     <MenuItem
                       key={notification._id}
-                      onClick={() => handleModalOpen(notification.text)}
+                      onClick={() =>
+                        handleModalOpen(notification._id, notification.text)
+                      }
                     >
                       <ListItem alignItems="flex-start">
                         <ListItemAvatar>
@@ -246,7 +269,7 @@ const Navbar = () => {
                 </Typography>
                 <FlexBetween>
                   <Button
-                    onClick={handleModalClose}
+                    onClick={() => readNotification(notificationId)}
                     sx={{
                       m: "1rem 0",
                       p: "0.75rem 2rem",
