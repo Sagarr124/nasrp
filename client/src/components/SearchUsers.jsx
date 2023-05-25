@@ -20,8 +20,8 @@ const SearchResults = ({ users }) => {
       {users.length > 0 ? (
         users.map((user) => (
           <WidgetWrapper
-            m="1rem 0"
             key={user._id}
+            m="1rem 0"
             sx={{ width: 300, maxWidth: 400, flexGrow: 1 }}
           >
             {/* FIRST ROW */}
@@ -104,7 +104,7 @@ const SearchUsers = ({ query }) => {
 
   useEffect(() => {
     handleSearch(query);
-  });
+  }, [query]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <Box

@@ -52,9 +52,9 @@ const Navbar = () => {
   const primaryMain = theme.palette.primary.main;
   const alt = theme.palette.background.alt;
   const { _id, fullName } = useSelector((state) => state.user);
-  const token = useSelector((state) => state.token);
-  const userMode = useSelector((state) => state.userMode);
-  const notifications = useSelector((state) => state.notifications);
+  const { token, userMode, notifications, jobs } = useSelector(
+    (state) => state
+  );
   const isNonMobileScreens = useMediaQuery("(min-width: 1000px)");
   const [checked, setChecked] = useState(
     userMode === "freelancer" ? true : false
@@ -63,7 +63,9 @@ const Navbar = () => {
   const [searchText, setSearchText] = useState("");
   const [modal, setModal] = useState(false);
   const [notificationId, setNotificationId] = useState("");
+  const [notificationSender, setNotificationSender] = useState("");
   const [notificationText, setNotificationText] = useState("");
+  const [job, setJob] = useState(null);
 
   const handleOpen = (event) => {
     setAnchorEl(event.currentTarget);
@@ -84,12 +86,21 @@ const Navbar = () => {
   };
 
   const handleSearch = () => {
-    navigate("/search", { state: { searchText } });
+    if (searchText.trim().length !== 0) {
+      navigate("/search", { state: { searchText } });
+    }
   };
 
-  const handleModalOpen = (notificationId, notificationText) => {
+  const handleModalOpen = (
+    notificationId,
+    notificationSender,
+    notificationText,
+    jobId
+  ) => {
     setNotificationId(notificationId);
+    setNotificationSender(notificationSender);
     setNotificationText(notificationText);
+    setJob(jobs.find((job) => job._id === jobId));
     setModal(true);
   };
 
@@ -115,6 +126,55 @@ const Navbar = () => {
     const updatedNotification = await response.json();
     dispatch(setNotification({ notification: updatedNotification }));
     handleModalClose();
+    handleClose();
+  };
+
+  const createOrder = async () => {
+    const response = await fetch(`http://localhost:3001/orders/`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        clientId: _id,
+        freelancerId: notificationSender,
+        description: job.title,
+        amount: parseInt((notificationText.match(/Rs\.\s*(\d+)/) || [])[1]),
+        startDate: new Date(),
+        endDate: job.dueDate,
+      }),
+    });
+
+    const order = await response.json();
+
+    if (response.ok) {
+      sendPayment(order._id);
+    }
+  };
+
+  const sendPayment = async (orderId) => {
+    const response = await fetch(`http://localhost:3001/payments/`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        orderId: orderId,
+        jobTitle: job.title,
+        amount: parseInt((notificationText.match(/Rs\.\s*(\d+)/) || [])[1]),
+      }),
+    });
+
+    if (response.ok) {
+      readNotification(notificationId);
+      const { url } = await response.json();
+      window.location = url;
+    } else {
+      const error = await response.json();
+      console.error(error);
+    }
   };
 
   useEffect(() => {
@@ -216,7 +276,12 @@ const Navbar = () => {
                     <MenuItem
                       key={notification._id}
                       onClick={() =>
-                        handleModalOpen(notification._id, notification.text)
+                        handleModalOpen(
+                          notification._id,
+                          notification.senderId,
+                          notification.text,
+                          notification.jobId
+                        )
                       }
                     >
                       <ListItem alignItems="flex-start">
@@ -231,7 +296,13 @@ const Navbar = () => {
                               variant="body2"
                               color="textSecondary"
                             >
-                              {notification.createdAt.toLocaleString()}
+                              {new Date(
+                                notification.createdAt
+                              ).toLocaleTimeString() +
+                                " | " +
+                                new Date(
+                                  notification.createdAt
+                                ).toLocaleDateString()}
                             </Typography>
                           }
                         />
@@ -282,7 +353,7 @@ const Navbar = () => {
                     Reject
                   </Button>
                   <Button
-                    onClick={""}
+                    onClick={createOrder}
                     sx={{
                       m: "1rem 0",
                       p: "0.25rem 2rem",

@@ -3,13 +3,14 @@ import Job from "../models/Job.js";
 /* CREATE */
 export const postJob = async (req, res) => {
   try {
-    const { clientId, title, categoryId, description } = req.body;
+    const { clientId, title, categoryId, description, dueDate } = req.body;
     
     const newJob = new Job({
       clientId,
       title,
       categoryId,
       description,
+      dueDate
     });
     await newJob.save();
 

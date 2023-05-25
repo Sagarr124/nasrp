@@ -12,6 +12,10 @@ const notificationSchema = new mongoose.Schema(
         ref: 'User',
         required: true
     },
+    jobId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Job',
+    },
     text: {
       type: String,
       required: true,

@@ -1,5 +1,26 @@
 import Order from "../models/Order.js";
 
+/* CREATE */
+export const createOrder = async (req, res) => {
+  try {
+    const { clientId, freelancerId, description, amount, startDate, endDate } = req.body;
+    const newOrder = new Order({
+      clientId,
+      freelancerId,
+      description,
+      amount,
+      startDate,
+      endDate,
+      orderStatus: "in progress"
+    });
+
+    const order = await newOrder.save();
+    res.status(201).json(order);
+  } catch (err) {
+    res.status(409).json({ message: err.message });
+  }
+};
+
 /* READ */
 export const getOrders = async (req, res) => {
   try {

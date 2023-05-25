@@ -24,11 +24,13 @@ import { setJobs } from "../state";
 const postJobSchema = yup.object().shape({
   title: yup.string().required("required"),
   description: yup.string().required("required"),
+  dueDate: yup.date().required("required"),
 });
 
 const initialValuesPostJob = {
   title: "",
   description: "",
+  dueDate: "",
 };
 
 const PostJobWidget = () => {
@@ -71,7 +73,7 @@ const PostJobWidget = () => {
   };
 
   const postJob = async (values) => {
-    const { title, description } = values;
+    const { title, description, dueDate } = values;
 
     const response = await fetch(`http://localhost:3001/jobs`, {
       method: "POST",
@@ -84,6 +86,7 @@ const PostJobWidget = () => {
         title: title,
         categoryId: category,
         description: description,
+        dueDate: new Date(dueDate),
       }),
     });
 
@@ -240,6 +243,19 @@ const PostJobWidget = () => {
                           helperText={touched.description && errors.description}
                           sx={{ gridColumn: "span 4" }}
                         />
+                        <TextField
+                          label="Due Date"
+                          placeholder="YYYY-MM-DD"
+                          onBlur={handleBlur}
+                          onChange={handleChange}
+                          value={values.dueDate}
+                          name="dueDate"
+                          error={
+                            Boolean(touched.dueDate) && Boolean(errors.dueDate)
+                          }
+                          helperText={touched.dueDate && errors.dueDate}
+                          sx={{ gridColumn: "span 4" }}
+                        />
                       </Box>
                       <Box>
                         <Button
@@ -256,24 +272,21 @@ const PostJobWidget = () => {
                         >
                           POST NOW
                         </Button>
-                        <Snackbar
-                          open={snackbarOpen}
-                          autoHideDuration={4000}
-                          onClose={handleSnackbarClose}
-                        >
-                          <Alert
-                            severity={severity}
-                            onClose={handleSnackbarClose}
-                          >
-                            {snackbarMessage}
-                          </Alert>
-                        </Snackbar>
                       </Box>
                     </form>
                   )}
                 </Formik>
               </Box>
             </Modal>
+            <Snackbar
+              open={snackbarOpen}
+              autoHideDuration={4000}
+              onClose={handleSnackbarClose}
+            >
+              <Alert severity={severity} onClose={handleSnackbarClose}>
+                {snackbarMessage}
+              </Alert>
+            </Snackbar>
           </>
         )}
       </FlexBetween>

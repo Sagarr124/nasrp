@@ -520,6 +520,7 @@ export const jobs = [
     title: "Build me a new website",
     categoryId: category[0]._id,
     description: "I need a new website for my small business. It should be modern and mobile-friendly. Please contact me with your portfolio and price quote.",
+    dueDate: new Date("2023-12-31")
   },
   {
     _id: new mongoose.Types.ObjectId(),
@@ -527,6 +528,7 @@ export const jobs = [
     title: "Web Development",
     categoryId: category[0]._id,
     description: "I need a web developer to create a responsive website using React.",
+    dueDate: new Date("2023-12-31")
   },
   {
     _id: new mongoose.Types.ObjectId(),
@@ -534,6 +536,7 @@ export const jobs = [
     title: "Logo Design",
     categoryId: category[1]._id,
     description: "I need a professional logo designer to create a logo for my new business.",
+    dueDate: new Date("2023-12-31")
   },
   {
     _id: new mongoose.Types.ObjectId(),
@@ -541,6 +544,7 @@ export const jobs = [
     title: "Content Writing",
     categoryId: category[3]._id,
     description: "I need a content writer to write articles for my blog.",
+    dueDate: new Date("2023-12-31")
   },
   {
     _id: new mongoose.Types.ObjectId(),
@@ -548,6 +552,7 @@ export const jobs = [
     title: "Mobile App Development",
     categoryId: category[0]._id,
     description: "I need a mobile app developer to create an app for Android and iOS.",
+    dueDate: new Date("2023-12-31")
   },
   {
     _id: new mongoose.Types.ObjectId(),
@@ -555,6 +560,7 @@ export const jobs = [
     title: "Graphic Design",
     categoryId: category[1]._id,
     description: "I need a graphic designer to design a poster for my event.",
+    dueDate: new Date("2023-12-31")
   },
   {
     _id: new mongoose.Types.ObjectId(),
@@ -562,6 +568,7 @@ export const jobs = [
     title: "Social Media Management",
     categoryId: category[2]._id,
     description: "I need someone to manage my social media accounts.",
+    dueDate: new Date("2023-12-31")
   },
   {
     _id: new mongoose.Types.ObjectId(),
@@ -569,6 +576,7 @@ export const jobs = [
     title: "Video Editing",
     categoryId: category[4]._id,
     description: "I need a video editor to edit my YouTube videos.",
+    dueDate: new Date("2023-12-31")
   },
   {
     _id: new mongoose.Types.ObjectId(),
@@ -576,6 +584,7 @@ export const jobs = [
     title: "SEO Optimization",
     categoryId: category[2]._id,
     description: "I need someone to optimize my website for search engines.",
+    dueDate: new Date("2023-12-31")
   },
   {
     _id: new mongoose.Types.ObjectId(),
@@ -583,6 +592,7 @@ export const jobs = [
     title: "Virtual Assistance",
     categoryId: category[5]._id,
     description: "I need a virtual assistant to help me with administrative tasks.",
+    dueDate: new Date("2023-12-31")
   },
   {
     _id: new mongoose.Types.ObjectId(),
@@ -590,6 +600,7 @@ export const jobs = [
     title: "Write content for my website",
     categoryId: category[3]._id,
     description: "I need a professional writer to create content for my website. The content should be SEO-friendly and engaging. Please contact me with your portfolio and price quote.",
+    dueDate: new Date("2023-12-31")
   },
   {
     _id: new mongoose.Types.ObjectId(),
@@ -597,6 +608,7 @@ export const jobs = [
     title: "Create a marketing plan for my business",
     categoryId: category[2]._id,
     description: "I need a marketing expert to create a comprehensive marketing plan for my business. It should include social media marketing, email marketing, and other relevant strategies. Please contact me with your portfolio and price quote.",
+    dueDate: new Date("2023-12-31")
   },
   {
     _id: new mongoose.Types.ObjectId(),
@@ -604,6 +616,7 @@ export const jobs = [
     title: "Build a custom e-commerce website",
     categoryId: category[2]._id,
     description: "I need a custom e-commerce website for my business. It should be easy to navigate and have a simple checkout process. Please contact me with your portfolio and price quote.",
+    dueDate: new Date("2023-12-31")
   },
   {
     _id: new mongoose.Types.ObjectId(),
@@ -611,6 +624,7 @@ export const jobs = [
     title: "Translate a document from English to Spanish",
     categoryId: category[3]._id,
     description: "I need a professional translator to translate a document from English to Spanish. The document is around 10 pages long. Please contact me with your portfolio and price quote.",
+    dueDate: new Date("2023-12-31")
   },
   {
     _id: new mongoose.Types.ObjectId(),
@@ -618,6 +632,7 @@ export const jobs = [
     title: "Create a video animation for my business",
     categoryId: category[4]._id,
     description: "I need a professional animator to create a video animation for my business. It should be creative and visually appealing. Please contact me with your portfolio and price quote.",
+    dueDate: new Date("2023-12-31")
   },
   {
     _id: new mongoose.Types.ObjectId(),
@@ -625,6 +640,7 @@ export const jobs = [
     title: "Create a custom WordPress plugin",
     categoryId: category[0]._id,
     description: "I need a custom WordPress plugin created for my website. It should have specific functionalities and integrate seamlessly with my website. Please contact me with your portfolio and price quote.",
+    dueDate: new Date("2023-12-31")
   },
   {
     _id: new mongoose.Types.ObjectId(),
@@ -632,6 +648,7 @@ export const jobs = [
     title: "Proofread and edit my document",
     categoryId: category[3]._id,
     description: "I need a professional proofreader and editor to proofread and edit my document. The document is around 20 pages long. Please contact me with your portfolio and price quote.",
+    dueDate: new Date("2023-12-31")
   },
   {
     _id: new mongoose.Types.ObjectId(),
@@ -639,6 +656,7 @@ export const jobs = [
     title: "English Tutor Needed",
     categoryId: category[5]._id,
     description: "Looking for an experienced English tutor to help with grammar and writing skills. Preferably someone with a teaching degree or experience in education.",
+    dueDate: new Date("2023-12-31")
   },
   {
     _id: new mongoose.Types.ObjectId(),
@@ -646,6 +664,7 @@ export const jobs = [
     title: "Music Teacher Wanted",
     categoryId: category[5]._id,
     description: "Seeking a qualified music teacher to teach guitar and piano lessons to beginners. Must have a music degree and experience teaching music to students of all ages.",
+    dueDate: new Date("2023-12-31")
   },
   {
     _id: new mongoose.Types.ObjectId(),
@@ -653,6 +672,7 @@ export const jobs = [
     title: "Art Teacher Needed",
     categoryId: category[5]._id,
     description: "Looking for a talented art teacher to teach drawing and painting classes to students of all levels. Must have experience teaching art and be able to create a fun and engaging learning environment.",
+    dueDate: new Date("2023-12-31")
   },
   {
     _id: new mongoose.Types.ObjectId(),
@@ -660,6 +680,7 @@ export const jobs = [
     title: "Fitness Instructor Needed",
     categoryId: category[5]._id,
     description: "We're looking for a qualified fitness instructor to lead group fitness classes at our gym. Must have experience teaching various fitness classes and be able to create a challenging and motivating workout for participants.",
+    dueDate: new Date("2023-12-31")
   },
   {
     _id: new mongoose.Types.ObjectId(),
@@ -667,6 +688,7 @@ export const jobs = [
     title: "Swimming Instructor Wanted",
     categoryId: category[5]._id,
     description: "Seeking an experienced swimming instructor to teach swimming lessons to students of all ages. Must have a lifeguard certification and experience teaching swimming lessons.",
+    dueDate: new Date("2023-12-31")
   },
   {
     _id: new mongoose.Types.ObjectId(),
@@ -674,6 +696,7 @@ export const jobs = [
     title: "Cooking Instructor Needed",
     categoryId: category[5]._id,
     description: "Looking for a talented cooking instructor to teach cooking classes to students of all levels. Must have experience teaching cooking and be able to create a fun and engaging learning environment.",
+    dueDate: new Date("2023-12-31")
   },
 ];
 

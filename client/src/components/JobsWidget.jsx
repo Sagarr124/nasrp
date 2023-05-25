@@ -36,25 +36,36 @@ const JobsWidget = () => {
     <>
       {jobs.length > 0 ? (
         jobs.map(
-          ({ _id, clientId, title, categoryId, description, createdAt }) => {
+          ({
+            _id,
+            clientId,
+            title,
+            categoryId,
+            description,
+            dueDate,
+            createdAt,
+          }) => {
             const user = users.find((usr) => usr._id === clientId);
             const category = categories.find((cat) => cat._id === categoryId);
             let date = new Date(createdAt);
             date = date.toLocaleDateString();
 
-            return (
-              <JobWidget
-                key={_id}
-                jobId={_id}
-                title={title}
-                category={category.title}
-                description={description}
-                clientId={user._id}
-                clientPicture={user.picturePath}
-                clientName={user.fullName}
-                date={date}
-              />
-            );
+            if (new Date(dueDate) > new Date()) {
+              return (
+                <JobWidget
+                  key={_id}
+                  jobId={_id}
+                  title={title}
+                  category={category.title}
+                  description={description}
+                  dueDate={new Date(dueDate).toLocaleDateString()}
+                  clientId={user._id}
+                  clientPicture={user.picturePath}
+                  clientName={user.fullName}
+                  date={date}
+                />
+              );
+            } else return null;
           }
         )
       ) : (

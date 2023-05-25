@@ -21,6 +21,7 @@ const JobWidget = ({
   title,
   category,
   description,
+  dueDate,
   clientId,
   clientPicture,
   clientName,
@@ -60,6 +61,7 @@ const JobWidget = ({
       body: JSON.stringify({
         senderId: _id,
         receiverId: clientId,
+        jobId: jobId,
         text: `You received an offer of Rs. ${bid} from ${userName}`,
       }),
     });
@@ -104,6 +106,14 @@ const JobWidget = ({
       <Divider />
 
       {/* THIRD ROW */}
+      <FlexBetween p="1rem 0">
+        <Typography color={medium}>Due Date: </Typography>
+        <Typography color={medium}>{dueDate}</Typography>
+      </FlexBetween>
+
+      <Divider />
+
+      {/* FOURTH ROW */}
       <Box p="1rem 0">
         <Box display="flex" alignItems="center" gap="1rem">
           <UserImage image={clientPicture} size="35px" />
@@ -113,7 +123,7 @@ const JobWidget = ({
 
       <Divider />
 
-      {/* FOURTH ROW */}
+      {/* FIFTH ROW */}
       <Box p="1rem 0">
         <Button
           disabled={userMode === "client"}
@@ -189,19 +199,19 @@ const JobWidget = ({
               >
                 Confirm
               </Button>
-              <Snackbar
-                open={snackbarOpen}
-                autoHideDuration={4000}
-                onClose={handleSnackbarClose}
-              >
-                <Alert severity={severity} onClose={handleSnackbarClose}>
-                  {snackbarMessage}
-                </Alert>
-              </Snackbar>
             </FlexBetween>
           </Box>
         </Modal>
       </Box>
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={4000}
+        onClose={handleSnackbarClose}
+      >
+        <Alert severity={severity} onClose={handleSnackbarClose}>
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </WidgetWrapper>
   );
 };

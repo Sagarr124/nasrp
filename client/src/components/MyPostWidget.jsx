@@ -188,16 +188,16 @@ const MyPostWidget = ({ picturePath }) => {
         >
           POST
         </Button>
-        <Snackbar
-          open={snackbarOpen}
-          autoHideDuration={4000}
-          onClose={handleSnackbarClose}
-        >
-          <Alert severity={severity} onClose={handleSnackbarClose}>
-            {snackbarMessage}
-          </Alert>
-        </Snackbar>
       </FlexBetween>
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={4000}
+        onClose={handleSnackbarClose}
+      >
+        <Alert severity={severity} onClose={handleSnackbarClose}>
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </WidgetWrapper>
   );
 };

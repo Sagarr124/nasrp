@@ -3,10 +3,11 @@ import Notification from "../models/Notification.js";
 /* CREATE */
 export const sendNotification = async (req, res) => {
   try {
-    const { senderId, receiverId, text } = req.body;
+    const { senderId, receiverId, jobId, text } = req.body;
     const newNotification = new Notification({
       senderId,
       receiverId,
+      jobId,
       text,
       read: false,
     });

@@ -17,7 +17,8 @@ import jobRoutes from "./routes/jobs.js";
 import orderRoutes from "./routes/orders.js";
 import messageRoutes from "./routes/messages.js";
 import categoryRoutes from "./routes/categories.js";
-import notificationRoutes from "./routes/notifications.js"
+import notificationRoutes from "./routes/notifications.js";
+import paymentRoutes from "./routes/payments.js";
 import { register } from "./controllers/auth.js";
 import { createPost } from "./controllers/posts.js";
 import { verifyToken } from "./middleware/auth.js";
@@ -118,6 +119,7 @@ app.use("/orders", orderRoutes);
 app.use("/messages", messageRoutes);
 app.use("/categories", categoryRoutes);
 app.use("/notifications", notificationRoutes);
+app.use("/payments", paymentRoutes);
 
 
 /* MONGOOSE SETUP */

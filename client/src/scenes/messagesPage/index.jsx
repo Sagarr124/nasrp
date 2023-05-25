@@ -240,7 +240,11 @@ const MessagesPage = () => {
                     >
                       <ListItemText
                         primary={message.content}
-                        secondary={message.createdAt.toLocaleString()}
+                        secondary={
+                          new Date(message.createdAt).toLocaleTimeString() +
+                          " | " +
+                          new Date(message.createdAt).toLocaleDateString()
+                        }
                         sx={{
                           padding: 1.5,
                           border: "1px solid black",

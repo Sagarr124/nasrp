@@ -22,6 +22,10 @@ const jobSchema = new mongoose.Schema(
       required: true,
       min: 5,
     },
+    dueDate: {
+      type: Date,
+      required: true,
+    },
   },
   { timestamps: true }
 );
