@@ -10,6 +10,7 @@ import path from "path";
 import http from "http";
 import { Server } from "socket.io";
 import { fileURLToPath } from "url";
+import stripePackage from "stripe";
 import authRoutes from "./routes/auth.js";
 import userRoutes from "./routes/users.js";
 import postRoutes from "./routes/posts.js";
@@ -18,7 +19,6 @@ import orderRoutes from "./routes/orders.js";
 import messageRoutes from "./routes/messages.js";
 import categoryRoutes from "./routes/categories.js";
 import notificationRoutes from "./routes/notifications.js";
-import paymentRoutes from "./routes/payments.js";
 import { register } from "./controllers/auth.js";
 import { createPost } from "./controllers/posts.js";
 import { verifyToken } from "./middleware/auth.js";
@@ -92,6 +92,37 @@ io.on('connection', (socket) => {
   });
 });
 
+/* PAYMENT */
+const stripe = stripePackage(process.env.STRIPE_SECRET_KEY);
+
+app.post("/payments", verifyToken, async (req, res) => {
+  try {
+    const { jobTitle, amount } = req.body;
+
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ['card'],
+      mode: 'payment',
+      line_items: [
+        {
+          price_data: {
+            currency: 'pkr',
+            product_data: {
+              name: jobTitle
+            },
+            unit_amount: amount * 100
+          },
+          quantity: 1
+        }
+      ],
+      success_url: `${process.env.CLIENT_URL}/orders`,
+      cancel_url: `${process.env.CLIENT_URL}/dashboard`
+    });
+    res.json({ url: session.url });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
 
 /* FILE STORAGE */
 const storage = multer.diskStorage({
@@ -119,7 +150,6 @@ app.use("/orders", orderRoutes);
 app.use("/messages", messageRoutes);
 app.use("/categories", categoryRoutes);
 app.use("/notifications", notificationRoutes);
-app.use("/payments", paymentRoutes);
 
 
 /* MONGOOSE SETUP */

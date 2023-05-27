@@ -1,4 +1,5 @@
 import Order from "../models/Order.js";
+import Payment from "../models/Payment.js";
 
 /* CREATE */
 export const createOrder = async (req, res) => {
@@ -15,6 +16,16 @@ export const createOrder = async (req, res) => {
     });
 
     const order = await newOrder.save();
+
+    const newPayment = new Payment({
+      orderId: order._id,
+      amount,
+    });
+
+    await newPayment.save();
+
+    res.json({ orderId: order._id });
+
     res.status(201).json(order);
   } catch (err) {
     res.status(409).json({ message: err.message });

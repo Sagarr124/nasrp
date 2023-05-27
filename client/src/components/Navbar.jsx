@@ -37,7 +37,12 @@ import { useDispatch, useSelector } from "react-redux";
 import { setMode, setUserMode, setLogout } from "../state";
 import { useNavigate } from "react-router-dom";
 import FlexBetween from "./FlexBetween";
-import { setNotifications, setNotification } from "../state";
+import {
+  setNotifications,
+  setNotification,
+  setCategories,
+  setJobs,
+} from "../state";
 
 const Navbar = () => {
   const [isMobileMenuToggled, setIsMobileMenuToggled] = useState(false);
@@ -52,7 +57,7 @@ const Navbar = () => {
   const primaryMain = theme.palette.primary.main;
   const alt = theme.palette.background.alt;
   const { _id, fullName } = useSelector((state) => state.user);
-  const { token, userMode, notifications, jobs } = useSelector(
+  const { token, userMode, notifications, categories, jobs } = useSelector(
     (state) => state
   );
   const isNonMobileScreens = useMediaQuery("(min-width: 1000px)");
@@ -106,6 +111,24 @@ const Navbar = () => {
 
   const handleModalClose = () => setModal(false);
 
+  const getJobs = async () => {
+    const response = await fetch("http://localhost:3001/jobs", {
+      method: "GET",
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    const data = await response.json();
+    dispatch(setJobs({ jobs: data }));
+  };
+
+  const getCategories = async () => {
+    const response = await fetch("http://localhost:3001/categories", {
+      method: "GET",
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    const data = await response.json();
+    dispatch(setCategories({ categories: data }));
+  };
+
   const getNotifications = async () => {
     const response = await fetch(`http://localhost:3001/notifications/${_id}`, {
       method: "GET",
@@ -130,56 +153,71 @@ const Navbar = () => {
   };
 
   const createOrder = async () => {
-    const response = await fetch(`http://localhost:3001/orders/`, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        clientId: _id,
-        freelancerId: notificationSender,
-        description: job.title,
-        amount: parseInt((notificationText.match(/Rs\.\s*(\d+)/) || [])[1]),
-        startDate: new Date(),
-        endDate: job.dueDate,
-      }),
-    });
+    try {
+      const response = await fetch(`http://localhost:3001/orders`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          clientId: _id,
+          freelancerId: notificationSender,
+          description: job.title,
+          amount: parseInt((notificationText.match(/Rs\.\s*(\d+)/) || [])[1]),
+          startDate: new Date(),
+          endDate: job.dueDate,
+        }),
+      });
 
-    const order = await response.json();
-
-    if (response.ok) {
-      sendPayment(order._id);
+      if (response.ok) {
+        const { orderId } = await response.json();
+        sendPayment(orderId);
+      } else {
+        const error = await response.json();
+        console.error(error);
+      }
+    } catch (err) {
+      console.error(err);
     }
   };
 
-  const sendPayment = async (orderId) => {
-    const response = await fetch(`http://localhost:3001/payments/`, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        orderId: orderId,
-        jobTitle: job.title,
-        amount: parseInt((notificationText.match(/Rs\.\s*(\d+)/) || [])[1]),
-      }),
-    });
+  const sendPayment = async () => {
+    try {
+      const response = await fetch(`http://localhost:3001/payments/`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          jobTitle: job.title,
+          amount: parseInt((notificationText.match(/Rs\.\s*(\d+)/) || [])[1]),
+        }),
+      });
 
-    if (response.ok) {
-      readNotification(notificationId);
-      const { url } = await response.json();
-      window.location = url;
-    } else {
-      const error = await response.json();
-      console.error(error);
+      if (response.ok) {
+        const { url } = await response.json();
+        window.location = url;
+        readNotification(notificationId);
+        createOrder();
+      } else {
+        const error = await response.json();
+        console.error(error);
+      }
+    } catch (err) {
+      console.error(err);
     }
   };
 
   useEffect(() => {
+    if (categories.length < 1) getCategories();
+    getJobs();
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
     getNotifications();
-  }, [userMode, anchorEl, notificationId, notificationText]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [userMode, anchorEl, notificationId]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <FlexBetween padding="1rem 4%" backgroundColor={alt}>
@@ -353,7 +391,7 @@ const Navbar = () => {
                     Reject
                   </Button>
                   <Button
-                    onClick={createOrder}
+                    onClick={sendPayment}
                     sx={{
                       m: "1rem 0",
                       p: "0.25rem 2rem",
