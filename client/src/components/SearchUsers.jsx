@@ -91,7 +91,6 @@ const SearchUsers = ({ query }) => {
   const [searchResults, setSearchResults] = useState([]);
 
   const handleSearch = (query) => {
-    console.log(users);
     const filteredUsers = users.filter(
       (user) =>
         user.fullName.toLowerCase().includes(query.toLowerCase()) ||
@@ -99,7 +98,6 @@ const SearchUsers = ({ query }) => {
         user.description.toLowerCase().includes(query.toLowerCase())
     );
     setSearchResults(filteredUsers);
-    console.log(searchResults);
   };
 
   useEffect(() => {
@@ -112,7 +110,7 @@ const SearchUsers = ({ query }) => {
       flexWrap="wrap"
       gap={3}
       width="100%"
-      padding="1rem 5%"
+      padding="0rem 5%"
       justifyContent={"center"}
     >
       <SearchResults users={searchResults} />

@@ -113,15 +113,6 @@ const Navbar = () => {
 
   const handleModalClose = () => setModal(false);
 
-  const getJobs = async () => {
-    const response = await fetch("http://localhost:3001/jobs", {
-      method: "GET",
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    const data = await response.json();
-    dispatch(setJobs({ jobs: data }));
-  };
-
   const getCategories = async () => {
     const response = await fetch("http://localhost:3001/categories", {
       method: "GET",
@@ -129,6 +120,15 @@ const Navbar = () => {
     });
     const data = await response.json();
     dispatch(setCategories({ categories: data }));
+  };
+
+  const getJobs = async () => {
+    const response = await fetch("http://localhost:3001/jobs", {
+      method: "GET",
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    const data = await response.json();
+    dispatch(setJobs({ jobs: data }));
   };
 
   const removeJob = async () => {

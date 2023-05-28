@@ -31,6 +31,15 @@ export const getUserPosts = async (req, res) => {
   }
 };
 
+export const getPosts = async (req, res) => {
+  try {
+    const posts = await Post.find();
+    res.status(200).json(posts);
+  } catch (err) {
+    res.status(404).json({ message: err.message });
+  }
+};
+
 /* UPDATE */
 export const likePost = async (req, res) => {
   try {
