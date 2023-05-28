@@ -70,6 +70,7 @@ const Navbar = () => {
   const [notificationId, setNotificationId] = useState("");
   const [notificationSender, setNotificationSender] = useState("");
   const [notificationText, setNotificationText] = useState("");
+  const [jobId, setJobId] = useState("");
   const [job, setJob] = useState(null);
 
   const handleOpen = (event) => {
@@ -105,6 +106,7 @@ const Navbar = () => {
     setNotificationId(notificationId);
     setNotificationSender(notificationSender);
     setNotificationText(notificationText);
+    setJobId(jobId);
     setJob(jobs.find((job) => job._id === jobId));
     setModal(true);
   };
@@ -127,6 +129,21 @@ const Navbar = () => {
     });
     const data = await response.json();
     dispatch(setCategories({ categories: data }));
+  };
+
+  const removeJob = async () => {
+    const response = await fetch(`http://localhost:3001/jobs/${jobId}`, {
+      method: "DELETE",
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    if (response.ok) {
+      console.log("Job removed successfully");
+    } else if (response.status === 404) {
+      console.log("Job not found");
+    } else {
+      console.log("Failed to remove job");
+    }
   };
 
   const getNotifications = async () => {
@@ -200,6 +217,7 @@ const Navbar = () => {
         const { url } = await response.json();
         window.location = url;
         readNotification(notificationId);
+        removeJob();
         createOrder();
       } else {
         const error = await response.json();
