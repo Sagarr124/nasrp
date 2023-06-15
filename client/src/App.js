@@ -7,6 +7,7 @@ import MessagesPage from "./scenes/messagesPage";
 import JobsPage from "./scenes/jobsPage";
 import OrdersPage from "./scenes/ordersPage";
 import SearchPage from "scenes/searchPage";
+import NotFoundPage from "scenes/notFoundPage";
 import { useMemo } from "react";
 import { useSelector } from "react-redux";
 import { CssBaseline, ThemeProvider } from "@mui/material";
@@ -50,6 +51,10 @@ function App() {
             <Route
               path="/search"
               element={isAuth ? <SearchPage /> : <Navigate to="/" />}
+            />
+            <Route
+              path="*"
+              element={<NotFoundPage />}
             />
           </Routes>
         </ThemeProvider>
