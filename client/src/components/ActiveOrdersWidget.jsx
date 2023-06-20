@@ -33,7 +33,7 @@ const ActiveOrdersWidget = ({ userId, page }) => {
   }, 0);
 
   return (
-    <WidgetWrapper>
+    <WidgetWrapper sx={{ paddingTop: "0.75rem" }}>
       <Grid display="flex">
         <Typography variant="h5" color={dark} fontWeight="500">
           Active Orders&nbsp;
@@ -44,7 +44,7 @@ const ActiveOrdersWidget = ({ userId, page }) => {
         </Typography>
       </Grid>
 
-      <Divider sx={{ margin: "0.75rem 0" }} />
+      <Divider sx={{ margin: "0.25rem 0 0.75rem 0" }} />
 
       <Paper sx={{ width: "100%", overflow: "hidden" }}>
         <TableContainer>

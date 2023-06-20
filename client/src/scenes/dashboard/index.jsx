@@ -2,6 +2,7 @@ import { Box, useMediaQuery } from "@mui/material";
 import { useSelector } from "react-redux";
 import Navbar from "../../components/Navbar";
 import UserWidget from "../../components/UserWidget";
+import UserStatsWidget from "../../components/UserStatsWidget";
 import ActiveOrdersWidget from "../../components/ActiveOrdersWidget";
 import { useEffect } from "react";
 
@@ -30,6 +31,7 @@ const Dashboard = () => {
           flexBasis={isNonMobileScreens ? "70%" : undefined}
           mt={isNonMobileScreens ? undefined : "2rem"}
         >
+          <UserStatsWidget />
           <ActiveOrdersWidget userId={_id} page={"dashboard"} />
         </Box>
       </Box>
