@@ -19,14 +19,20 @@ const ActiveOrdersWidget = ({ userId, page }) => {
   const medium = palette.neutral.medium;
 
   const activeOrderCount = orders.reduce((count, order) => {
-    if (new Date(order.endDate) > new Date()) {
+    if (
+      new Date(order.endDate) > new Date() &&
+      order.orderStatus === "in progress"
+    ) {
       return count + 1;
     }
     return count;
   }, 0);
 
   const totalPriceOfActiveOrders = orders.reduce((totalPrice, order) => {
-    if (new Date(order.endDate) > new Date()) {
+    if (
+      new Date(order.endDate) > new Date() &&
+      order.orderStatus === "in progress"
+    ) {
       return totalPrice + order.amount;
     }
     return totalPrice;

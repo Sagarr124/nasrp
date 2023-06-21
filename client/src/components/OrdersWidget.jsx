@@ -50,7 +50,11 @@ const OrdersWidget = ({ userId, page = "orders" }) => {
             const userId = userMode === "client" ? freelancerId : clientId;
             const user = users.find((usr) => usr._id === userId);
 
-            if (page === "dashboard" && new Date(endDate) > new Date()) {
+            if (
+              page === "dashboard" &&
+              new Date(endDate) > new Date() &&
+              orderStatus === "in progress"
+            ) {
               return (
                 <OrderWidget
                   key={_id}
