@@ -1,11 +1,12 @@
 import { useState } from "react";
 import {
   Box,
-  Stack,
   Button,
   TextField,
   useMediaQuery,
   Typography,
+  FormControlLabel,
+  Checkbox,
   Snackbar,
   Alert,
   useTheme,
@@ -35,10 +36,6 @@ const loginSchema = yup.object().shape({
   password: yup.string().required("required"),
 });
 
-const forgotPasswordSchema = yup.object().shape({
-  email: yup.string().email("invalid email").required("required"),
-});
-
 const initialValuesRegister = {
   fullName: "",
   userName: "",
@@ -55,10 +52,6 @@ const initialValuesLogin = {
   password: "",
 };
 
-const initialValuesForgotPassword = {
-  email: "",
-};
-
 const Form = () => {
   const [pageType, setPageType] = useState("login");
   const { palette } = useTheme();
@@ -67,7 +60,6 @@ const Form = () => {
   const isNonMobile = useMediaQuery("(min-width:600px)");
   const isLogin = pageType === "login";
   const isRegister = pageType === "register";
-  const isForgotPassword = pageType === "forgot";
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
 
@@ -123,12 +115,9 @@ const Form = () => {
     onSubmitProps.resetForm();
   };
 
-  const forgotPassword = async (values, onSubmitProps) => {};
-
   const handleFormSubmit = async (values, onSubmitProps) => {
     if (isLogin) await login(values, onSubmitProps);
     if (isRegister) await register(values, onSubmitProps);
-    if (isForgotPassword) await forgotPassword(values, onSubmitProps);
   };
 
   return (
@@ -137,16 +126,12 @@ const Form = () => {
       initialValues={
         isLogin
           ? initialValuesLogin
-          : isRegister
-          ? initialValuesRegister
-          : initialValuesForgotPassword
+          : initialValuesRegister
       }
       validationSchema={
         isLogin
           ? loginSchema
-          : isRegister
-          ? registerSchema
-          : forgotPasswordSchema
+          : registerSchema
       }
     >
       {({
@@ -304,39 +289,7 @@ const Form = () => {
                   helperText={touched.password && errors.password}
                   sx={{ gridColumn: "span 4" }}
                 />
-                <Typography
-                  onClick={() => {
-                    setPageType("forgot");
-                    resetForm();
-                  }}
-                  sx={{
-                    textDecoration: "underline",
-                    color: palette.primary.main,
-                    textAlign: "right",
-                    "&:hover": {
-                      cursor: "pointer",
-                      color: palette.primary.light,
-                    },
-                    gridColumn: "span 4",
-                  }}
-                >
-                  {isLogin && "Forgotten password?"}
-                </Typography>
-              </>
-            )}
-
-            {isForgotPassword && (
-              <>
-                <TextField
-                  label="Enter email address"
-                  onBlur={handleBlur}
-                  onChange={handleChange}
-                  value={values.email}
-                  name="email"
-                  error={Boolean(touched.email) && Boolean(errors.email)}
-                  helperText={touched.email && errors.email}
-                  sx={{ gridColumn: "span 4" }}
-                />
+                {isLogin && <FormControlLabel sx={{gridColumn: "span 4", justifyContent: "right", mt: "0rem", mb: "-1rem" }} control={<Checkbox defaultChecked />} label="Remember Me?" />}
               </>
             )}
           </Box>
@@ -387,40 +340,6 @@ const Form = () => {
                   </Alert>
                 </Snackbar>
               </>
-            )}
-
-            {isForgotPassword && (
-              <Stack direction="row" justifyContent={"right"}>
-                <Button
-                  onClick={() => {
-                    setPageType("login");
-                    resetForm();
-                  }}
-                  sx={{
-                    m: "2rem 0",
-                    p: "1rem 2rem",
-                    color: palette.background.main,
-                    "&:hover": { color: palette.primary.main },
-                  }}
-                  variant="outlined"
-                >
-                  Cancel
-                </Button>
-                <Button
-                  type="submit"
-                  sx={{
-                    m: "2rem 0",
-                    p: "1rem 2rem",
-                    marginLeft: "2rem",
-                    backgroundColor: palette.primary.main,
-                    color: palette.background.alt,
-                    "&:hover": { color: palette.primary.main },
-                  }}
-                  variant="outlined"
-                >
-                  Verify
-                </Button>
-              </Stack>
             )}
           </Box>
         </form>
