@@ -69,6 +69,7 @@ const UserStatsWidget = () => {
             <TableRow>
               <TableCell
                 sx={{
+                  width: "50%",
                   borderRight: "1px solid rgba(224, 224, 224, 1)",
                   padding: "0.5rem 0.5rem 0.5rem 0.5rem",
                 }}

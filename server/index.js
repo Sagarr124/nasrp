@@ -153,6 +153,8 @@ app.use("/notifications", notificationRoutes);
 
 
 /* MONGOOSE SETUP */
+const PORT = process.env.PORT || 6001;
+
 mongoose.connect(process.env.MONGO_URL, { 
   useNewUrlParser: true, 
   useUnifiedTopology: true 
@@ -160,6 +162,8 @@ mongoose.connect(process.env.MONGO_URL, {
 .then(() => {
   console.log(`MongoDB connected successfully.`);
 
+  server.listen(PORT, () => console.log(`Server Port: ${PORT}`));
+  
   /* ADD DATA ONE TIME */
   // User.insertMany(users);
   // Post.insertMany(posts);
@@ -173,8 +177,3 @@ mongoose.connect(process.env.MONGO_URL, {
   // Payment.insertMany(payment);
 })
 .catch((error) => console.log(`${error} did not connect`));
-
-
-const PORT = process.env.PORT || 6001;
-
-server.listen(PORT, () => console.log(`Server Port: ${PORT}`));
