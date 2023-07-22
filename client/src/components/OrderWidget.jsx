@@ -71,16 +71,17 @@ const OrderWidget = ({
     return `${value} Star${value !== 1 ? "s" : ""}, ${labels[value]}`;
   };
 
-  const calculateRating = () => {
+  const calculateRating = (temp) => {
     let currentRating = users.find((user) => user._id === userId).rating;
     let newRating = value;
     let currentRatingWeight = 0.7;
     let newRatingWeight = 0.3;
-    let completedOrders = orders.filter(
-      (order) =>
-        (order.clientId === userId || order.freelancerId === userId) &&
-        order.orderStatus === "completed"
-    ).length;
+    let completedOrders =
+      orders.filter(
+        (order) =>
+          (order.clientId === userId || order.freelancerId === userId) &&
+          order.orderStatus === "completed"
+      ).length + temp;
     let orderWeightFactor = 0.1;
 
     let weightedCurrentRating = currentRating * currentRatingWeight;
@@ -118,7 +119,7 @@ const OrderWidget = ({
       setSnackbarMessage("Order marked as completed!");
       setSeverity("success");
       setSnackbarOpen(true);
-      updateUserRating();
+      updateUserRating(1);
     } else {
       setSnackbarMessage("Failed to mark order as completed!");
       setSeverity("error");
@@ -145,7 +146,7 @@ const OrderWidget = ({
       setSnackbarMessage("Order cancelled!");
       setSeverity("success");
       setSnackbarOpen(true);
-      updateUserRating();
+      updateUserRating(0);
     } else {
       setSnackbarMessage("Failed to cancel order!");
       setSeverity("error");
@@ -154,8 +155,8 @@ const OrderWidget = ({
     setOpen(false);
   };
 
-  const updateUserRating = async () => {
-    const rating = calculateRating();
+  const updateUserRating = async (temp) => {
+    const rating = calculateRating(temp);
 
     const response = await fetch(
       `http://localhost:3001/users/${userId}/rating`,

@@ -32,8 +32,18 @@ import Category from "./models/Category.js";
 import Job from "./models/Job.js";
 import Order from "./models/Order.js";
 import Payment from "./models/Payment.js";
-import { users, posts, conversations, messages, clients, freelancers, category, jobs, orders, payment } from "./data/index.js";
-
+import {
+  users,
+  posts,
+  conversations,
+  messages,
+  clients,
+  freelancers,
+  category,
+  jobs,
+  orders,
+  payment,
+} from "./data/index.js";
 
 /* CONFIGURATIONS */
 const __filename = fileURLToPath(import.meta.url);
@@ -57,7 +67,7 @@ app.use(bodyParser.json({ limit: "30mb", extended: true }));
 app.use(bodyParser.urlencoded({ limit: "30mb", extended: true }));
 app.use(cors());
 app.use("/assets", express.static(path.join(__dirname, "public/assets")));
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
   res.header(
     "Access-Control-Allow-Headers",
@@ -66,13 +76,12 @@ app.use(function(req, res, next) {
   next();
 });
 
-
 /* MESSAGING */
-io.on('connection', (socket) => {
-  console.log('a user connected');
+io.on("connection", (socket) => {
+  console.log("a user connected");
 
-  socket.on('chat message', async (message) => {
-    console.log('received message at server-side:', message);
+  socket.on("chat message", async (message) => {
+    console.log("received message at server-side:", message);
 
     const newMessage = new Message({
       conversationId: message.conversationId,
@@ -83,11 +92,11 @@ io.on('connection', (socket) => {
 
     try {
       const savedMessage = await newMessage.save();
-      console.log('Message saved to database:', savedMessage);
+      console.log("Message saved to database:", savedMessage);
 
-      io.to(recipientId).emit('chat message', savedMessage);
+      io.to(recipientId).emit("chat message", savedMessage);
     } catch (err) {
-      console.error('Error saving message:', err);
+      console.error("Error saving message:", err);
     }
   });
 });
@@ -100,29 +109,28 @@ app.post("/payments", verifyToken, async (req, res) => {
     const { jobTitle, amount } = req.body;
 
     const session = await stripe.checkout.sessions.create({
-      payment_method_types: ['card'],
-      mode: 'payment',
+      payment_method_types: ["card"],
+      mode: "payment",
       line_items: [
         {
           price_data: {
-            currency: 'pkr',
+            currency: "pkr",
             product_data: {
-              name: jobTitle
+              name: jobTitle,
             },
-            unit_amount: amount * 100
+            unit_amount: amount * 100,
           },
-          quantity: 1
-        }
+          quantity: 1,
+        },
       ],
       success_url: `${process.env.CLIENT_URL}/orders`,
-      cancel_url: `${process.env.CLIENT_URL}/dashboard`
+      cancel_url: `${process.env.CLIENT_URL}/dashboard`,
     });
-    res.json({ url: session.url });
+    res.status(200).json({ url: session.url });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 });
-
 
 /* FILE STORAGE */
 const storage = multer.diskStorage({
@@ -135,11 +143,9 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
-
 /* ROUTES WITH FILES */
 app.post("/auth/register", upload.single("picture"), register);
 app.post("/posts", verifyToken, upload.single("picture"), createPost);
-
 
 /* ROUTES */
 app.use("/auth", authRoutes);
@@ -151,29 +157,29 @@ app.use("/messages", messageRoutes);
 app.use("/categories", categoryRoutes);
 app.use("/notifications", notificationRoutes);
 
-
 /* MONGOOSE SETUP */
 const PORT = process.env.PORT || 6001;
 
-mongoose.connect(process.env.MONGO_URL, { 
-  useNewUrlParser: true, 
-  useUnifiedTopology: true 
-})
-.then(() => {
-  console.log(`MongoDB connected successfully.`);
+mongoose
+  .connect(process.env.MONGO_URL, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  .then(() => {
+    console.log(`MongoDB connected successfully.`);
 
-  server.listen(PORT, () => console.log(`Server Port: ${PORT}`));
-  
-  /* ADD DATA ONE TIME */
-  // User.insertMany(users);
-  // Post.insertMany(posts);
-  // Client.insertMany(clients);
-  // Freelancer.insertMany(freelancers);
-  // Conversation.insertMany(conversations);
-  // Message.insertMany(messages);
-  // Category.insertMany(category);
-  // Job.insertMany(jobs);
-  // Order.insertMany(orders);
-  // Payment.insertMany(payment);
-})
-.catch((error) => console.log(`${error} did not connect`));
+    server.listen(PORT, () => console.log(`Server Port: ${PORT}`));
+
+    /* ADD DATA ONE TIME */
+    // User.insertMany(users);
+    // Post.insertMany(posts);
+    // Client.insertMany(clients);
+    // Freelancer.insertMany(freelancers);
+    // Conversation.insertMany(conversations);
+    // Message.insertMany(messages);
+    // Category.insertMany(category);
+    // Job.insertMany(jobs);
+    // Order.insertMany(orders);
+    // Payment.insertMany(payment);
+  })
+  .catch((error) => console.log(`${error} did not connect`));

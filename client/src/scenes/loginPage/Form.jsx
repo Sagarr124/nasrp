@@ -61,6 +61,7 @@ const Form = () => {
   const isLogin = pageType === "login";
   const isRegister = pageType === "register";
   const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [severity, setSeverity] = useState("error");
   const [snackbarMessage, setSnackbarMessage] = useState("");
 
   const handleSnackbarClose = () => {
@@ -88,6 +89,16 @@ const Form = () => {
     if (savedUser) {
       setPageType("login");
     }
+
+    if (savedUserResponse.status === 201) {
+      setSnackbarMessage("Sign Up Successful!");
+      setSeverity("success");
+      setSnackbarOpen(true);
+    } else {
+      setSnackbarMessage(savedUser.msg);
+      setSeverity("error");
+      setSnackbarOpen(true);
+    }
   };
 
   const login = async (values, onSubmitProps) => {
@@ -109,6 +120,7 @@ const Form = () => {
       navigate("/dashboard");
     } else if (loggedInResponse.status === 400) {
       setSnackbarMessage(loggedIn.msg);
+      setSeverity("error");
       setSnackbarOpen(true);
     }
 
@@ -123,16 +135,8 @@ const Form = () => {
   return (
     <Formik
       onSubmit={handleFormSubmit}
-      initialValues={
-        isLogin
-          ? initialValuesLogin
-          : initialValuesRegister
-      }
-      validationSchema={
-        isLogin
-          ? loginSchema
-          : registerSchema
-      }
+      initialValues={isLogin ? initialValuesLogin : initialValuesRegister}
+      validationSchema={isLogin ? loginSchema : registerSchema}
     >
       {({
         values,
@@ -289,7 +293,18 @@ const Form = () => {
                   helperText={touched.password && errors.password}
                   sx={{ gridColumn: "span 4" }}
                 />
-                {isLogin && <FormControlLabel sx={{gridColumn: "span 4", justifyContent: "right", mt: "0rem", mb: "-1rem" }} control={<Checkbox defaultChecked />} label="Remember Me?" />}
+                {isLogin && (
+                  <FormControlLabel
+                    sx={{
+                      gridColumn: "span 4",
+                      justifyContent: "right",
+                      mt: "0rem",
+                      mb: "-1rem",
+                    }}
+                    control={<Checkbox defaultChecked />}
+                    label="Remember Me?"
+                  />
+                )}
               </>
             )}
           </Box>
@@ -335,7 +350,7 @@ const Form = () => {
                   autoHideDuration={4000}
                   onClose={handleSnackbarClose}
                 >
-                  <Alert severity="error" onClose={handleSnackbarClose}>
+                  <Alert severity={severity} onClose={handleSnackbarClose}>
                     {snackbarMessage}
                   </Alert>
                 </Snackbar>

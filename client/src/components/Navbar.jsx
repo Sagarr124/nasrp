@@ -188,11 +188,11 @@ const Navbar = () => {
       });
 
       if (response.ok) {
-        const { orderId } = await response.json();
-        sendPayment(orderId);
+        const order = await response.json();
+        console.log("Order created successfully:", order);
       } else {
         const error = await response.json();
-        console.error(error);
+        console.error("Error creating order:", error);
       }
     } catch (err) {
       console.error(err);

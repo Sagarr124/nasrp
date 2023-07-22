@@ -62,7 +62,7 @@ const JobWidget = ({
         senderId: _id,
         receiverId: clientId,
         jobId: jobId,
-        text: `You received an offer of Rs. ${bid} from ${userName}`,
+        text: `You have received an offer of Rs. ${bid} from ${userName}`,
       }),
     });
 
@@ -164,7 +164,7 @@ const JobWidget = ({
             </Typography>
             <TextField
               fullWidth
-              label="Your Bid"
+              label="Your Bid (Rs.)"
               name="bid"
               value={bid}
               onChange={(event) => setBid(event.target.value)}

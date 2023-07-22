@@ -11,6 +11,6 @@ router.post("/", verifyToken, postJob);
 router.get("/", verifyToken, getJobs);
 
 /* DELETE */
-router.get("/:jobId", verifyToken, removeJob);
+router.delete("/:jobId", verifyToken, removeJob);
 
 export default router;

@@ -4,13 +4,13 @@ import Job from "../models/Job.js";
 export const postJob = async (req, res) => {
   try {
     const { clientId, title, categoryId, description, dueDate } = req.body;
-    
+
     const newJob = new Job({
       clientId,
       title,
       categoryId,
       description,
-      dueDate
+      dueDate,
     });
     await newJob.save();
 
@@ -20,7 +20,6 @@ export const postJob = async (req, res) => {
     res.status(409).json({ message: err.message });
   }
 };
-
 
 /* READ */
 export const getJobs = async (req, res) => {
@@ -34,16 +33,16 @@ export const getJobs = async (req, res) => {
 
 /* DELETE */
 export const removeJob = async (req, res) => {
-  const jobId = req.params.id;
+  const { jobId } = req.params;
 
   try {
     const job = await Job.findByIdAndRemove(jobId);
 
     if (!job) {
-      return res.status(404).json({ message: 'Job not found' });
+      return res.status(404).json({ message: "Job not found" });
     }
 
-    res.json({ message: 'Job removed successfully' });
+    res.json({ message: "Job removed successfully" });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
