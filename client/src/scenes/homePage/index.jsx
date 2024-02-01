@@ -3,12 +3,12 @@ import { useNavigate } from "react-router-dom";
 import { Typography } from "@mui/material";
 import Swiper from "swiper";
 import AOS from "aos";
-import "./index.css";
 import "aos/dist/aos.css";
 import "swiper/css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.min.js";
 import "bootstrap-icons/font/bootstrap-icons.css";
+import "./index.css";
 import HeroImage from "../../assets/hero.svg";
 import AboutImage from "../../assets/about.jpg";
 
@@ -19,100 +19,130 @@ const HomePage = () => {
     /**
      * Sticky Header on Scroll
      */
-    const selectHeader = document.querySelector("#header");
-    if (selectHeader) {
-      let headerOffset = selectHeader.offsetTop;
-      let nextElement = selectHeader.nextElementSibling;
+    const handleScroll = () => {
+      const header = document.querySelector("#header");
+      if (!header) return;
+
+      const headerOffset = header.offsetTop;
+      const nextElement = header.nextElementSibling;
 
       const headerFixed = () => {
         if (headerOffset - window.scrollY <= 0) {
-          selectHeader.classList.add("sticked");
+          header.classList.add("sticked");
           if (nextElement) nextElement.classList.add("sticked-header-offset");
         } else {
-          selectHeader.classList.remove("sticked");
+          header.classList.remove("sticked");
           if (nextElement)
             nextElement.classList.remove("sticked-header-offset");
         }
       };
-      window.addEventListener("load", headerFixed);
-      document.addEventListener("scroll", headerFixed);
-    }
+
+      window.addEventListener("scroll", headerFixed);
+
+      return () => {
+        window.removeEventListener("scroll", headerFixed);
+      };
+    };
+
+    handleScroll();
 
     /**
      * Navbar links active state on scroll
      */
-    let navbarlinks = document.querySelectorAll("#navbar a");
+    const handleNavbarLinksActive = () => {
+      const navbarLinks = document.querySelectorAll("#navbar a");
+      if (!navbarLinks.length) return;
 
-    function navbarlinksActive() {
-      navbarlinks.forEach((navbarlink) => {
-        if (!navbarlink.hash) return;
+      const navbarLinksActive = () => {
+        navbarLinks.forEach((navbarLink) => {
+          if (!navbarLink.hash) return;
 
-        let section = document.querySelector(navbarlink.hash);
-        if (!section) return;
+          const section = document.querySelector(navbarLink.hash);
+          if (!section) return;
 
-        let position = window.scrollY + 200;
+          const position = window.scrollY + 200;
 
-        if (
-          position >= section.offsetTop &&
-          position <= section.offsetTop + section.offsetHeight
-        ) {
-          navbarlink.classList.add("active");
-        } else {
-          navbarlink.classList.remove("active");
-        }
-      });
-    }
-    window.addEventListener("load", navbarlinksActive);
-    document.addEventListener("scroll", navbarlinksActive);
+          if (
+            position >= section.offsetTop &&
+            position <= section.offsetTop + section.offsetHeight
+          ) {
+            navbarLink.classList.add("active");
+          } else {
+            navbarLink.classList.remove("active");
+          }
+        });
+      };
+
+      window.addEventListener("scroll", navbarLinksActive);
+
+      return () => {
+        window.removeEventListener("scroll", navbarLinksActive);
+      };
+    };
+
+    handleNavbarLinksActive();
 
     /**
      * Mobile nav toggle
      */
-    const mobileNavShow = document.querySelector(".mobile-nav-show");
-    const mobileNavHide = document.querySelector(".mobile-nav-hide");
+    const handleMobileNavToggle = () => {
+      const mobileNavShow = document.querySelector(".mobile-nav-show");
+      const mobileNavHide = document.querySelector(".mobile-nav-hide");
+      if (!mobileNavShow || !mobileNavHide) return;
 
-    document.querySelectorAll(".mobile-nav-toggle").forEach((el) => {
-      el.addEventListener("click", function (event) {
+      const mobileNavToggle = (event) => {
         event.preventDefault();
-        mobileNavToogle();
-      });
-    });
+        document.body.classList.toggle("mobile-nav-active");
+        mobileNavShow.classList.toggle("d-none");
+        mobileNavHide.classList.toggle("d-none");
+      };
 
-    function mobileNavToogle() {
-      document.querySelector("body").classList.toggle("mobile-nav-active");
-      mobileNavShow.classList.toggle("d-none");
-      mobileNavHide.classList.toggle("d-none");
-    }
+      document.querySelectorAll(".mobile-nav-toggle").forEach((el) => {
+        el.addEventListener("click", mobileNavToggle);
+      });
+
+      return () => {
+        document.querySelectorAll(".mobile-nav-toggle").forEach((el) => {
+          el.removeEventListener("click", mobileNavToggle);
+        });
+      };
+    };
+
+    handleMobileNavToggle();
 
     /**
      * Hide mobile nav on same-page/hash links
      */
-    document.querySelectorAll("#navbar a").forEach((navbarlink) => {
-      if (!navbarlink.hash) return;
+    const handleHideMobileNav = () => {
+      document.querySelectorAll("#navbar a").forEach((navbarLink) => {
+        if (!navbarLink.hash) return;
 
-      let section = document.querySelector(navbarlink.hash);
-      if (!section) return;
+        const section = document.querySelector(navbarLink.hash);
+        if (!section) return;
 
-      navbarlink.addEventListener("click", () => {
-        if (document.querySelector(".mobile-nav-active")) {
-          mobileNavToogle();
-        }
+        navbarLink.addEventListener("click", () => {
+          const mobileNavActive = document.querySelector(".mobile-nav-active");
+          if (mobileNavActive) handleMobileNavToggle();
+        });
       });
-    });
+    };
+
+    handleHideMobileNav();
 
     /**
      * Scroll top button
      */
-    const scrollTop = document.querySelector(".scroll-top");
-    if (scrollTop) {
-      const togglescrollTop = function () {
+    const handleScrollTop = () => {
+      const scrollTop = document.querySelector(".scroll-top");
+      if (!scrollTop) return;
+
+      const toggleScrollTop = () => {
         window.scrollY > 100
           ? scrollTop.classList.add("active")
           : scrollTop.classList.remove("active");
       };
 
-      window.addEventListener("load", togglescrollTop);
-      document.addEventListener("scroll", togglescrollTop);
+      window.addEventListener("scroll", toggleScrollTop);
 
       scrollTop.addEventListener("click", () => {
         window.scrollTo({
@@ -120,54 +150,62 @@ const HomePage = () => {
           behavior: "smooth",
         });
       });
-    }
+
+      return () => {
+        window.removeEventListener("scroll", toggleScrollTop);
+      };
+    };
+
+    handleScrollTop();
 
     /**
      * Init swiper slider with 3 slides at once in desktop view
      */
-    new Swiper(".slides-3", {
-      speed: 600,
-      loop: true,
-      autoplay: {
-        delay: 5000,
-        disableOnInteraction: false,
-      },
-      slidesPerView: "auto",
-      pagination: {
-        el: ".swiper-pagination",
-        type: "bullets",
-        clickable: true,
-      },
-      navigation: {
-        nextEl: ".swiper-button-next",
-        prevEl: ".swiper-button-prev",
-      },
-      breakpoints: {
-        320: {
-          slidesPerView: 1,
-          spaceBetween: 40,
+    const initSwiper = () => {
+      new Swiper(".slides-3", {
+        speed: 600,
+        loop: true,
+        autoplay: {
+          delay: 5000,
+          disableOnInteraction: false,
         },
-        1200: {
-          slidesPerView: 3,
+        slidesPerView: "auto",
+        pagination: {
+          el: ".swiper-pagination",
+          type: "bullets",
+          clickable: true,
         },
-      },
-    });
+        navigation: {
+          nextEl: ".swiper-button-next",
+          prevEl: ".swiper-button-prev",
+        },
+        breakpoints: {
+          320: {
+            slidesPerView: 1,
+            spaceBetween: 40,
+          },
+          1200: {
+            slidesPerView: 3,
+          },
+        },
+      });
+    };
+
+    initSwiper();
 
     /**
      * Animation on scroll function and init
      */
-    function aos_init() {
+    const initAos = () => {
       AOS.init({
         duration: 1000,
         easing: "ease-in-out",
         once: true,
         mirror: false,
       });
-    }
+    };
 
-    window.addEventListener("load", () => {
-      aos_init();
-    });
+    initAos();
   }, []);
 
   return (
@@ -204,12 +242,12 @@ const HomePage = () => {
               </li>
             </ul>
           </nav>
-          {/* .navbar */}
           <i className="mobile-nav-toggle mobile-nav-show bi bi-list" />
           <i className="mobile-nav-toggle mobile-nav-hide d-none bi bi-x" />
         </div>
       </header>
       {/* End Header */}
+
       {/* ======= Hero Section ======= */}
       <section id="hero" className="hero">
         <div className="container position-relative">
@@ -572,6 +610,7 @@ const HomePage = () => {
           </div>
         </section>
         {/* End Testimonials Section */}
+
         {/* ======= Frequently Asked Questions Section ======= */}
         <section id="faq" className="faq">
           <div className="container" data-aos="fade-up">

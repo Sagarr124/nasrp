@@ -1,13 +1,15 @@
 Fonts:root {
-  --font-default: "Rubik", "Open Sans", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --font-default: "Rubik", "Open Sans", system-ui, -apple-system, "Segoe UI",
+    Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif,
+    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
   --font-primary: "Montserrat", sans-serif;
   --font-secondary: "Poppins", sans-serif;
 }
 
 /* Colors */
 :root {
-  --color-default: #00401A;
-  --color-primary: #007D35;
+  --color-default: #00401a;
+  --color-primary: #007d35;
   --color-secondary: #ffffff;
 }
 
@@ -191,7 +193,7 @@ section {
     position: relative;
   }
 
-  .navbar>ul>li {
+  .navbar > ul > li {
     white-space: nowrap;
     padding: 10px 0 10px 28px;
   }
@@ -218,7 +220,7 @@ section {
     margin-left: 5px;
   }
 
-  .navbar>ul>li>a:before {
+  .navbar > ul > li > a:before {
     content: "";
     position: absolute;
     width: 100%;
@@ -232,7 +234,7 @@ section {
   }
 
   .navbar a:hover:before,
-  .navbar li:hover>a:before,
+  .navbar li:hover > a:before,
   .navbar .active:before {
     visibility: visible;
     width: 100%;
@@ -241,14 +243,12 @@ section {
   .navbar a:hover,
   .navbar .active,
   .navbar .active:focus,
-  .navbar li:hover>a {
+  .navbar li:hover > a {
     color: var(--color-primary);
-    ;
   }
 }
 
 @media (min-width: 1280px) {
-
   .mobile-nav-show,
   .mobile-nav-hide {
     display: none;
@@ -275,7 +275,7 @@ section {
     inset: 0;
     padding: 50px 0 10px 0;
     margin: 0;
-    background: var(--color-primary);
+    background: white;
     overflow-y: auto;
     transition: 0.3s;
     z-index: 9998;
@@ -305,9 +305,8 @@ section {
   .navbar a:hover,
   .navbar .active,
   .navbar .active:focus,
-  .navbar li:hover>a {
+  .navbar li:hover > a {
     color: var(--color-primary);
-    ;
   }
 
   .navbar .getstarted,
@@ -327,7 +326,6 @@ section {
 
   .mobile-nav-show {
     color: var(--color-primary);
-    ;
     font-size: 28px;
     cursor: pointer;
     line-height: 0;
@@ -338,7 +336,6 @@ section {
 
   .mobile-nav-hide {
     color: var(--color-primary);
-    ;
     font-size: 32px;
     cursor: pointer;
     line-height: 0;
@@ -372,7 +369,7 @@ section {
   width: 100%;
   position: relative;
   background: var(--color-secondary);
-  padding: 60px 0 0 0;
+  padding: 50px 0 0 0;
 }
 
 @media (min-width: 1365px) {
@@ -399,6 +396,7 @@ section {
   letter-spacing: 1px;
   display: inline-block;
   padding: 14px 40px;
+  margin-bottom: 20px;
   border-radius: 50px;
   transition: 0.3s;
   border-color: var(--color-primary);
@@ -428,18 +426,20 @@ section {
 # About Us Section
 --------------------------------------------------------------*/
 .about .row {
-  align-content: center;
+  align-items: center;
+  justify-content: center;
+  margin-left: 10px;
+  margin-right: 10px;
 }
 
 .about .content {
-  font-size: 24px;
+  font-size: 3.5vmin;
   text-align: justify;
 }
 
 .about .about-img {
   text-align: center;
 }
-
 
 /*--------------------------------------------------------------
 # Our Services Section
@@ -618,7 +618,6 @@ section {
   }
 }
 
-
 /*--------------------------------------------------------------
 # Frequently Asked Questions Section
 --------------------------------------------------------------*/
@@ -693,7 +692,6 @@ section {
   background: #fff;
   box-shadow: none;
 }
-
 
 /*--------------------------------------------------------------
 # Contact Section
@@ -774,7 +772,7 @@ section {
   font-weight: 600;
 }
 
-.contact .email-form .error-message br+br {
+.contact .email-form .error-message br + br {
   margin-top: 25px;
 }
 
@@ -813,14 +811,14 @@ section {
   font-size: 14px;
 }
 
-.contact .email-form input[type=text],
-.contact .email-form input[type=email],
+.contact .email-form input[type="text"],
+.contact .email-form input[type="email"],
 .contact .email-form textarea {
   padding: 12px 15px;
 }
 
-.contact .email-form input[type=text]:focus,
-.contact .email-form input[type=email]:focus,
+.contact .email-form input[type="text"]:focus,
+.contact .email-form input[type="email"]:focus,
 .contact .email-form textarea:focus {
   border-color: var(--color-primary);
 }
@@ -829,7 +827,7 @@ section {
   padding: 10px 12px;
 }
 
-.contact .email-form button[type=submit] {
+.contact .email-form button[type="submit"] {
   background: var(--color-default);
   border: 2px solid rgba(255, 255, 255, 0.1);
   padding: 14px 45px;
@@ -839,7 +837,7 @@ section {
   border-color: var(--color-primary);
 }
 
-.contact .email-form button[type=submit]:hover {
+.contact .email-form button[type="submit"]:hover {
   background: var(--color-secondary);
   color: var(--color-default);
   border-color: var(--color-primary);
